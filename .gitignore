@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.DS_Store
+*.log
+.vscode/
+
+
+# data/
+/data/raw_data
+/data/form_data
+
+# Middle Data Processes
+/data/init_data
+/data/init_manual_data
+/data/map_cell_line
+/data/map_manual_cell_line
+
+# Result
+/data/result
