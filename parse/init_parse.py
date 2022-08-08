@@ -127,7 +127,7 @@ class ReadFile():
 
 
 # ReadFile().nci_combo_input()
-ReadFile().parse_drugcomb_fi()
+# ReadFile().parse_drugcomb_fi()
 # ReadFile().gdsc_rnaseq()
 # ReadFile().gdsc_cnv()
 

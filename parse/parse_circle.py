@@ -222,7 +222,7 @@ class DrugAnnotation():
     def __init__(self):
         pass
 
-    def nci_drugbank_drug_intersect(self):
+    def dlinput_drugbank_drug_intersect(self):
         tail_cell_dl_input_df = pd.read_csv('../data/mid_cell_line/tail_cell_dl_input.csv')
         tail_cell_dl_input_drug_list = sorted(list(set(list(tail_cell_dl_input_df['Drug A']) + list(tail_cell_dl_input_df['Drug B']))))
         tail_gene_drugbank_df = pd.read_csv('../data/mid_gene/tail_gene_drugbank.csv')
@@ -279,6 +279,8 @@ class RecheckFinal():
         tail_cell_drug_dl_input_df = pd.read_csv('../data/mid_drug/tail_cell_drug_dl_input.csv')
         # tail_cell_drug_dl_input_df['Score'] = (tail_cell_drug_dl_input_df['Score'] - tail_cell_drug_dl_input_df['Score'].mean()) / tail_cell_drug_dl_input_df['Score'].std()    
         tail_cell_drug_dl_input_df.to_csv('../data/filtered_data/final_dl_input.csv', index=False, header=True)
+        cell_line_list = sorted(list(set(tail_cell_drug_dl_input_df['Cell Line Name'])))
+        print('----- NUMBER OF CELL LINES IN DEEP LEARNING INPUT: ' + str(len(cell_line_list)) + ' ------')
         # [RNA-Seq]
         tail_cell_gene_rna_df = pd.read_csv('../data/mid_gene/tail_cell_gene_rna.csv')
         tail_cell_gene_rna_df = tail_cell_gene_rna_df.replace(['missing'], 0.0)
@@ -303,8 +305,8 @@ if os.path.exists('../data/filtered_data') == False:
     os.mkdir('../data/filtered_data')
 
 
-# dataset = 'almanac'
-dataset = 'oneil'
+dataset = 'almanac'
+# dataset = 'oneil'
 
 # CellLineAnnotation().parse_cell_xml()
 # CellLineAnnotation().dl_cell_annotation(dataset)
@@ -314,10 +316,9 @@ dataset = 'oneil'
 # GeneAnnotation().gdsc_raw_cnv_tail_overzero()
 # GeneAnnotation().gdsc_cnv_tail_overzero()
 # GeneAnnotation().kegg_omics_intersect()
-# GeneAnnotation().kegg_up_omics_intersect()
 # GeneAnnotation().kegg_drugbank_gene_intersect()
 
-# DrugAnnotation().nci_drugbank_drug_intersect()
+# DrugAnnotation().dlinput_drugbank_drug_intersect()
 
 # RecheckFinal().recheck_cell_line()
 RecheckFinal().final()

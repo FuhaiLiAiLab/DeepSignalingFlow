@@ -4,6 +4,8 @@ __pycache__/
 *.log
 .vscode/
 
+# data-oneil/
+/data-oneil
 
 # data/
 /data/raw_data
