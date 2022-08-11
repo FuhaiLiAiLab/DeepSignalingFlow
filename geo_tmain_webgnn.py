@@ -70,7 +70,7 @@ def arg_parse():
                         input_dim = 4,
                         hidden_dim = 4,
                         output_dim = 36,
-                        decoder_dim = 70,
+                        decoder_dim = 150,
                         num_classes = 1,
                         num_gc_layer = 3,
                         dropout = 0.01)
@@ -180,9 +180,9 @@ def train_geowebgnn(args, fold_n, load_path, iteration_num, device):
         iteration_num = 0
     max_test_corr = 0
     max_test_corr_id = 0
-    e1 = 20
-    e2 = 15
-    e3 = 15
+    e1 = 30
+    e2 = 30
+    e3 = 20
     e4 = 50
     epoch_loss_list = []
     epoch_pearson_list = []
@@ -379,9 +379,9 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
-    # prog_args.model = 'load'
-    # load_path = './data/result/epoch_200/best_train_model.pt'
-    load_path = ''
+    prog_args.model = 'load'
+    load_path = './data/result/epoch_200_4/best_train_model.pt'
+    # load_path = ''
     yTr = np.load('./data/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./data/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]

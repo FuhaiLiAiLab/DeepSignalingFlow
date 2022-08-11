@@ -103,6 +103,8 @@ class WeBGNNDecoder(nn.Module):
         self.act = nn.ReLU()
         self.act2 = nn.LeakyReLU(negative_slope = 0.1)
 
+        self.x_norm = nn.BatchNorm1d(input_dim)
+
         self.parameter1 = torch.nn.Parameter(torch.randn(int(embedding_dim*3), decoder_dim).to(device='cuda'))
         self.parameter2 = torch.nn.Parameter(torch.randn(decoder_dim, decoder_dim).to(device='cuda'))
 
@@ -119,7 +121,9 @@ class WeBGNNDecoder(nn.Module):
         return conv_first, conv_block, conv_last
 
     def forward(self, x, edge_index, drug_index, label):
-        x = self.conv_first(x, edge_index)
+        x_norm = self.x_norm(x)
+        # import pdb; pdb.set_trace()
+        x = self.conv_first(x_norm, edge_index)
         x = self.act2(x)
 
         x = self.conv_block(x, edge_index)
