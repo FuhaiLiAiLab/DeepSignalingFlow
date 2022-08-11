@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 
-from geo_tmain_webgnn import arg_parse, build_geowebgnn_model
+# from geo_tmain_webgnn import arg_parse, build_geowebgnn_model
 
 class PanEdgeAnalyse():
     def __init__(self):
@@ -32,6 +32,7 @@ class PanEdgeAnalyse():
         np.save('./analysis_' + dataset + '/fold_' + str(fold_n) + '_pan/last_conv_up_weight.npy', last_conv_up_weight)
         np.save('./analysis_' + dataset + '/fold_' + str(fold_n) + '_pan/last_conv_down_weight.npy', last_conv_down_weight)
 
+        import pdb; pdb.set_trace()
         # MAKE ABSOLUTE VALUE
         first_conv_up_weight = np.absolute(first_conv_up_weight)
         first_conv_down_weight = np.absolute(first_conv_down_weight)
@@ -64,6 +65,18 @@ class PanEdgeAnalyse():
         kegg_gene_interaction_df.to_csv('./analysis_' + dataset + '/fold_' + str(fold_n) + '_pan/kegg_weighted_gene_interaction.csv', index=False, header=True)
 
 
+    def average_nfold(self):
+        fold_1_weight_df = pd.read_csv('./analysis_nci/fold_1_pan/kegg_weighted_gene_interaction.csv')
+        fold_2_weight_df = pd.read_csv('./analysis_nci/fold_2_pan/kegg_weighted_gene_interaction.csv')
+        fold_3_weight_df = pd.read_csv('./analysis_nci/fold_3_pan/kegg_weighted_gene_interaction.csv')
+        fold_4_weight_df = pd.read_csv('./analysis_nci/fold_4_pan/kegg_weighted_gene_interaction.csv')
+        fold_5_weight_df = pd.read_csv('./analysis_nci/fold_5_pan/kegg_weighted_gene_interaction.csv')
+
+        import pdb; pdb.set_trace()
+        pd.concat([fold_1_weight_df, fold_2_weight_df, fold_3_weight_df, fold_4_weight_df, fold_5_weight_df]).groupby(level=0).mean()
+        df = panel.mean(axis=0)
+
+
 if __name__ == "__main__":
     ##### REBUILD MODEL AND ANALYSIS PARAMTERS
     prog_args = arg_parse()
@@ -80,3 +93,5 @@ if __name__ == "__main__":
     if os.path.exists('./analysis_' + dataset) == False:
         os.mkdir('./analysis_' + dataset)
     PanEdgeAnalyse().reform_weight_adj(fold_n, model)
+
+    # PanEdgeAnalyse().average_nfold()
