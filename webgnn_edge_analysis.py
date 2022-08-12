@@ -71,9 +71,11 @@ class PanEdgeAnalyse():
         fold_3_weight_df = pd.read_csv('./analysis_nci/fold_3_pan/kegg_weighted_gene_interaction.csv')
         fold_4_weight_df = pd.read_csv('./analysis_nci/fold_4_pan/kegg_weighted_gene_interaction.csv')
         fold_5_weight_df = pd.read_csv('./analysis_nci/fold_5_pan/kegg_weighted_gene_interaction.csv')
-
-        import pdb; pdb.set_trace()
+        # AVERAGE DATAFRAME
         averaged_fold_df = pd.concat([fold_1_weight_df, fold_2_weight_df, fold_3_weight_df, fold_4_weight_df, fold_5_weight_df]).groupby(level=0).mean()
+        # CONVERT COLUMN DATA TYPE
+        averaged_fold_df['src'] = averaged_fold_df['src'].astype(int)
+        averaged_fold_df['dest'] = averaged_fold_df['dest'].astype(int)
         averaged_fold_df.to_csv('./analysis_nci/averaged_fold_kegg_weighted_gene_interaction.csv', index=False, header=True)
 
 

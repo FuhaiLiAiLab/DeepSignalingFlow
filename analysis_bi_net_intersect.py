@@ -10,7 +10,7 @@ class UniqueGeneNetAnalyse():
 
     def intersect_net(self, node_threshold):
         # READ INFORMATION FROM FILE
-        gene_up_weight_edge_df = pd.read_csv('./analysis_nci/bianalyse_data/gene_up_weight_edge.csv')
+        gene_up_weight_edge_df = pd.read_csv('./analysis_nci/averaged_fold_kegg_weighted_gene_interaction.csv')
         gene_up_degree_df = pd.read_csv('./analysis_nci/bianalyse_data/gene_weight_up_degree.csv')
         # FORM [cellline_gene_dict] TO MAP GENES WITH INDEX NUM !!! START FROM 1
         cellline_gene_df = pd.read_csv('./analysis_nci/filtered_data/nci60-ccle_RNAseq_tpm2.csv')
