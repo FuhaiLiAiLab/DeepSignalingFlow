@@ -76,7 +76,7 @@ class PanEdgeAnalyse():
         # CONVERT COLUMN DATA TYPE
         averaged_fold_df['src'] = averaged_fold_df['src'].astype(int)
         averaged_fold_df['dest'] = averaged_fold_df['dest'].astype(int)
-        averaged_fold_df.to_csv('./analysis_nci/averaged_fold_kegg_weighted_gene_interaction.csv', index=False, header=True)
+        averaged_fold_df.to_csv('./analysis_nci/gene_bind_weight_edge.csv', index=False, header=True)
 
 
 if __name__ == "__main__":
