@@ -7,17 +7,15 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from statistics import mean
-from parse_file import ParseFile, k_fold_split
-from webgnn_dec_analysis import PlotMSECorr
 from statsmodels.distributions.empirical_distribution import ECDF
 
 class Specify():
-    def __init__(self, dir_opt):
-        self.dir_opt = dir_opt
+    def __init__(self):
+        pass
 
     def cancer_cellline_specific(self, top_k, cellline_name):
         # ALL TEST RESULTS
-        dl_input_df = pd.read_table('./datainfo2/filtered_data/RandomFinalDeepLearningInput.txt', delimiter=',')
+        dl_input_df = pd.read_csv('./data/filtered_data/random_final_dl_input.csv')
         cancer_specific_input_indexlist = []
         for row in dl_input_df.itertuples():
             if row[3] == cellline_name:
@@ -27,10 +25,10 @@ class Specify():
         test_pred_df_list = []
         for place_num in range(1, k + 1):
             if place_num == 1:
-                result_path = './datainfo2/result/webgnn_decoder/epoch_75'
+                result_path = './data/result/nci_webgnn/epoch_200'
             else:
-                result_path = './datainfo2/result/webgnn_decoder/epoch_75_' + str(place_num - 1)
-            test_pred_path = result_path + '/TestPred.txt'
+                result_path = './data/result/nci_webgnn/epoch_200_' + str(place_num - 1)
+            test_pred_path = result_path + '/BestTestPred.txt'
             test_pred_df = pd.read_table(test_pred_path, delimiter=',')
             test_pred_df_list.append(test_pred_df)
         all_test_pred_df = pd.concat(test_pred_df_list, ignore_index=True)
@@ -183,30 +181,29 @@ if __name__ == "__main__":
     ############# LISTS OF CELL LINE SPECIFIC ANALYSIS ###########
     ##############################################################
     top_k = 10
-    # cellline_name = 'DU-145'
-    cellline_name = 'PC-3'
-    dir_opt = '/datainfo2'
-    testloss_topminobj_list, testloss_bottomminobj_list = Specify(dir_opt).cancer_cellline_specific(top_k, cellline_name)
+    cellline_name = 'DU-145'
+    # cellline_name = 'PC-3'
+    testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
 
-    top_n = 1
-    testloss_topminobj = testloss_topminobj_list[top_n - 1]
-    testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
+    # top_n = 1
+    # testloss_topminobj = testloss_topminobj_list[top_n - 1]
+    # testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
 
-    # MAKE BOXPLOTS
-    topmin_loss = True
-    if cellline_name == 'A549/ATCC':
-        bind_plot_path = './datainfo2/bianalyse_data/A549' + '/bind_plots'
-    else:
-        bind_plot_path = './datainfo2/bianalyse_data/' + cellline_name + '/bind_plots'
-    if topmin_loss == True:
-        if cellline_name == 'A549/ATCC':
-            filename = bind_plot_path + '/kdeplot_topmin_A549_top_' + str(top_n) + '.png'
-        else:
-            filename = bind_plot_path + '/kdeplot_topmin_'  + cellline_name + '_top_' + str(top_n) + '.png'
-        Specify(dir_opt).cancer_cellline_plot(top_k, cellline_name, testloss_topminobj, filename)
-    else:
-        if cellline_name == 'A549/ATCC':
-            filename = bind_plot_path + '/kdeplot_bottommin_A549_bottom_' + str(top_n) + '.png'
-        else:
-            filename = bind_plot_path + '/kdeplot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
-        Specify(dir_opt).cancer_cellline_plot(top_k, cellline_name, testloss_bottomminobj, filename)
+    # # MAKE BOXPLOTS
+    # topmin_loss = True
+    # if cellline_name == 'A549/ATCC':
+    #     bind_plot_path = './datainfo2/bianalyse_data/A549' + '/bind_plots'
+    # else:
+    #     bind_plot_path = './datainfo2/bianalyse_data/' + cellline_name + '/bind_plots'
+    # if topmin_loss == True:
+    #     if cellline_name == 'A549/ATCC':
+    #         filename = bind_plot_path + '/kdeplot_topmin_A549_top_' + str(top_n) + '.png'
+    #     else:
+    #         filename = bind_plot_path + '/kdeplot_topmin_'  + cellline_name + '_top_' + str(top_n) + '.png'
+    #     Specify(dir_opt).cancer_cellline_plot(top_k, cellline_name, testloss_topminobj, filename)
+    # else:
+    #     if cellline_name == 'A549/ATCC':
+    #         filename = bind_plot_path + '/kdeplot_bottommin_A549_bottom_' + str(top_n) + '.png'
+    #     else:
+    #         filename = bind_plot_path + '/kdeplot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
+    #     Specify(dir_opt).cancer_cellline_plot(top_k, cellline_name, testloss_bottomminobj, filename)

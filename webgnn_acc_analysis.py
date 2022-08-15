@@ -15,31 +15,31 @@ class PlotMSECorr():
     def rebuild_loss_pearson(self, path, epoch_num):
         epoch_loss_list = []
         epoch_pearson_list = []
-        min_train_loss = 100
-        min_train_id = 0
+        min_test_loss = 100
+        min_test_id = 0
         for i in range(1, epoch_num + 1):
-            train_df = pd.read_csv(path + '/TrainingPred_' + str(i) + '.txt', delimiter=',')
-            score_list = list(train_df['Score'])
-            pred_list = list(train_df['Pred Score'])
+            test_df = pd.read_csv(path + '/TestPred' + str(i) + '.txt', delimiter=',')
+            score_list = list(test_df['Score'])
+            pred_list = list(test_df['Pred Score'])
             epoch_loss = mean_squared_error(score_list, pred_list)
             epoch_loss_list.append(epoch_loss)
-            epoch_pearson = train_df.corr(method = 'pearson')
+            epoch_pearson = test_df.corr(method = 'pearson')
             epoch_pearson_list.append(epoch_pearson['Pred Score'][0])
-            if epoch_loss < min_train_loss:
-                min_train_loss = epoch_loss
-                min_train_id = i
-        print('-------------BEST MODEL ID:' + str(min_train_id) + '-------------')
-        print('BEST MODEL TRAIN LOSS: ', min_train_loss)
-        print('BEST MODEL PEARSON CORR: ', epoch_pearson_list[min_train_id - 1])
-        # print('\n-------------EPOCH TRAINING PEARSON CORRELATION LIST: -------------')
-        # print(epoch_pearson_list)
-        # print('\n-------------EPOCH TRAINING MSE LOSS LIST: -------------')
-        # print(epoch_loss_list)
+            if epoch_loss < min_test_loss:
+                min_test_loss = epoch_loss
+                min_test_id = i
+        best_train_df = pd.read_csv(path + '/TrainingPred_' + str(min_test_id) + '.txt', delimiter=',')
+        best_train_df.to_csv(path + '/BestTrainingPred.txt')
+        best_test_df = pd.read_csv(path + '/TestPred' + str(min_test_id) + '.txt', delimiter=',')
+        best_test_df.to_csv(path + '/BestTestPred.txt')
+        print('-------------BEST MODEL ID:' + str(min_test_id) + '-------------')
+        print('BEST MODEL TEST LOSS: ', min_test_loss)
+        print('BEST MODEL PEARSON CORR: ', epoch_pearson_list[min_test_id - 1])
         epoch_pearson_array = np.array(epoch_pearson_list)
         epoch_loss_array = np.array(epoch_loss_list)
         np.save(path + '/pearson.npy', epoch_pearson_array)
         np.save(path + '/loss.npy', epoch_loss_array)
-        return min_train_id
+        return min_test_id
 
     def plot_loss_pearson(self, path, epoch_num):
         epoch_pearson_array = np.load(path + '/pearson.npy')
@@ -96,17 +96,18 @@ class PlotMSECorr():
         plt.savefig(path, dpi = 300)
 
 if __name__ == "__main__":
-    # ###########################################################################################
-    # ############### ANALYSE [MSE_LOSS/PEARSON CORRELATION] FROM RECORDED FILES ################
-    # ###########################################################################################
+    ###########################################################################################
+    ############### ANALYSE [MSE_LOSS/PEARSON CORRELATION] FROM RECORDED FILES ################
+    ###########################################################################################
+    path = './data/result/nci_webgnn/epoch_200_4'
     # path = './data/result/oneil_webgnn/epoch_200'
-    # epoch_num = 200
-    # min_train_id = PlotMSECorr().rebuild_loss_pearson(path, epoch_num)
+    epoch_num = 200
+    min_test_id = PlotMSECorr().rebuild_loss_pearson(path, epoch_num)
     # PlotMSECorr().plot_loss_pearson(path, epoch_num)
 
     # # ANALYSE DRUG EFFECT
     # print('ANALYSING DRUG EFFECT...')
     # epoch_time = '200'
-    # best_model_num = str(min_train_id)
+    # best_model_num = str(min_test_id)
     # PlotMSECorr().plot_train_real_pred(path, best_model_num, epoch_time)
     # PlotMSECorr().plot_test_real_pred(path, best_model_num, epoch_time)
