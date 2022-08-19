@@ -99,7 +99,7 @@ if __name__ == "__main__":
     ###########################################################################################
     ############### ANALYSE [MSE_LOSS/PEARSON CORRELATION] FROM RECORDED FILES ################
     ###########################################################################################
-    path = './data/result/nci_webgnn/epoch_200_4'
+    path = './data/result/nci_webgnn/epoch_200'
     # path = './data/result/oneil_webgnn/epoch_200'
     epoch_num = 200
     min_test_id = PlotMSECorr().rebuild_loss_pearson(path, epoch_num)
