@@ -58,8 +58,8 @@ class Specify():
         print(cancer_specific_top_testinput_df)
         cancer_specific_topmin_testinput_df \
             = cancer_specific_top_testinput_df.sort_values(by=['Test MSE Loss'], ascending=True)
-        print(cancer_specific_topmin_testinput_df)
         print('----- TOP MINIMUM TEST MES LOSS OF ' + cellline_name + ' -----')
+        print(cancer_specific_topmin_testinput_df)
         testloss_topminidx = cancer_specific_topmin_testinput_df['Test MSE Loss'].idxmin()
         testloss_topminobj = cancer_specific_test_input_df.loc[testloss_topminidx, :]
         testloss_topminobj_list = []
@@ -75,8 +75,8 @@ class Specify():
         print(cancer_specific_bottom_testinput_df)
         cancer_specific_bottommin_testinput_df \
             = cancer_specific_bottom_testinput_df.sort_values(by=['Test MSE Loss'], ascending=True)
-        print(cancer_specific_bottommin_testinput_df)
         print('----- BOTTOM MINIMUM TEST MES LOSS OF ' + cellline_name + ' -----')
+        print(cancer_specific_bottommin_testinput_df)
         testloss_bottomminidx = cancer_specific_bottommin_testinput_df['Test MSE Loss'].idxmin()
         testloss_bottomminobj = cancer_specific_test_input_df.loc[testloss_bottomminidx, :]
         testloss_bottomminobj_list = []
