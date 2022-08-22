@@ -418,7 +418,7 @@ class NetAnalyse():
                     edgelist = bind_graph_drugtar_links,
                     connectionstyle = 'arc3, rad = 0.3',
                     edge_color = 'lightblue',
-                    width = 1.0)
+                    width = 1.2)
 
         nx.draw_networkx_labels(bind_filtered_digraph,
                     pos = pos,
@@ -458,7 +458,7 @@ if __name__ == "__main__":
     # NetAnalyse().statistic_net()
     
     #####
-    node_threshold = 2.5
+    node_threshold = 0.8
     edge_threshold = 0.2
 
     intersection_name_list, intersection_list, intersection_degree_list = \
@@ -467,13 +467,13 @@ if __name__ == "__main__":
     # SET TRAINING/TEST SET
     top_k = 20
     seed = 187
-    topmin_loss = True
+    topmin_loss = False
     # cellline_name = 'DU-145'
     # cellline_name = 'PC-3'
     cellline_name = 'NCI-H460'
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
-    top_n = 1
+    top_n = 5
     testloss_topminobj = testloss_topminobj_list[top_n - 1]
     testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
 

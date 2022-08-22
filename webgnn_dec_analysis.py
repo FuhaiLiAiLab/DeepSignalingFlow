@@ -80,7 +80,7 @@ if __name__ == "__main__":
     # ###########################################################################################
     edge_threshold = 0.2
     ReformWeightAdj().filter_edge(edge_threshold)
-    degree_threshold = 2.5
+    degree_threshold = 0.5
     ReformWeightAdj().filter_gene(degree_threshold)
 
 
