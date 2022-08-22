@@ -378,7 +378,7 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 3
+    fold_n = 5
     # prog_args.model = 'load'
     # load_path = './data/result/epoch_500/best_train_model.pt'
     load_path = ''
