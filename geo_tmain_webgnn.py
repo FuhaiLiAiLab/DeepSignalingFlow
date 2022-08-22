@@ -65,7 +65,7 @@ def arg_parse():
                         lr = 0.001,
                         clip= 2.0,
                         batch_size = 64,
-                        num_epochs = 200,
+                        num_epochs = 500,
                         num_workers = 0,
                         input_dim = 4,
                         hidden_dim = 4,
@@ -378,15 +378,15 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 5
-    prog_args.model = 'load'
-    load_path = './data/result/epoch_200_4/best_train_model.pt'
-    # load_path = ''
+    fold_n = 3
+    # prog_args.model = 'load'
+    # load_path = './data/result/epoch_500/best_train_model.pt'
+    load_path = ''
     yTr = np.load('./data/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./data/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
     epoch_iteration = int(dl_input_num / prog_args.batch_size)
-    start_iter_num = 200 * epoch_iteration
+    start_iter_num = 500 * epoch_iteration
     train_geowebgnn(prog_args, fold_n, load_path, start_iter_num, device)
 
     # # # TEST THE MODEL

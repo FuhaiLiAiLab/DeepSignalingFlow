@@ -13,30 +13,46 @@ class PlotMSECorr():
         pass
 
     def rebuild_loss_pearson(self, path, epoch_num):
-        epoch_loss_list = []
-        epoch_pearson_list = []
+        test_epoch_loss_list = []
+        train_epoch_loss_list = []
+        test_epoch_pearson_list = []
+        train_epoch_pearson_list = []
         min_test_loss = 100
+        min_train_loss = 100
         min_test_id = 0
         for i in range(1, epoch_num + 1):
+            # TEST LOSS
             test_df = pd.read_csv(path + '/TestPred' + str(i) + '.txt', delimiter=',')
-            score_list = list(test_df['Score'])
-            pred_list = list(test_df['Pred Score'])
-            epoch_loss = mean_squared_error(score_list, pred_list)
-            epoch_loss_list.append(epoch_loss)
-            epoch_pearson = test_df.corr(method = 'pearson')
-            epoch_pearson_list.append(epoch_pearson['Pred Score'][0])
-            if epoch_loss < min_test_loss:
-                min_test_loss = epoch_loss
+            test_score_list = list(test_df['Score'])
+            test_pred_list = list(test_df['Pred Score'])
+            test_epoch_loss = mean_squared_error(test_score_list, test_pred_list)
+            test_epoch_loss_list.append(test_epoch_loss)
+            test_epoch_pearson = test_df.corr(method = 'pearson')
+            test_epoch_pearson_list.append(test_epoch_pearson['Pred Score'][0])
+            # TRAIN LOSS
+            train_df = pd.read_csv(path + '/TrainingPred_' + str(i) + '.txt', delimiter=',')
+            train_score_list = list(train_df['Score'])
+            train_pred_list = list(train_df['Pred Score'])
+            train_epoch_loss = mean_squared_error(train_score_list, train_pred_list)
+            train_epoch_loss_list.append(train_epoch_loss)
+            train_epoch_pearson = train_df.corr(method = 'pearson')
+            train_epoch_pearson_list.append(train_epoch_pearson['Pred Score'][0])
+            if test_epoch_loss < min_test_loss:
+                min_test_loss = test_epoch_loss
+                min_train_loss = train_epoch_loss
                 min_test_id = i
         best_train_df = pd.read_csv(path + '/TrainingPred_' + str(min_test_id) + '.txt', delimiter=',')
         best_train_df.to_csv(path + '/BestTrainingPred.txt')
         best_test_df = pd.read_csv(path + '/TestPred' + str(min_test_id) + '.txt', delimiter=',')
         best_test_df.to_csv(path + '/BestTestPred.txt')
+        import pdb; pdb.set_trace()
         print('-------------BEST MODEL ID:' + str(min_test_id) + '-------------')
+        print('BEST MODEL TRAIN LOSS: ', min_train_loss)
+        print('BEST MODEL PEARSON CORR: ', train_epoch_pearson_list[min_test_id - 1])
         print('BEST MODEL TEST LOSS: ', min_test_loss)
-        print('BEST MODEL PEARSON CORR: ', epoch_pearson_list[min_test_id - 1])
-        epoch_pearson_array = np.array(epoch_pearson_list)
-        epoch_loss_array = np.array(epoch_loss_list)
+        print('BEST MODEL PEARSON CORR: ', test_epoch_pearson_list[min_test_id - 1])
+        epoch_pearson_array = np.array(test_epoch_pearson_list)
+        epoch_loss_array = np.array(test_epoch_loss_list)
         np.save(path + '/pearson.npy', epoch_pearson_array)
         np.save(path + '/loss.npy', epoch_loss_array)
         return min_test_id
