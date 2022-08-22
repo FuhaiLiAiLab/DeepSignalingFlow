@@ -86,6 +86,7 @@ class ReadFile():
         kegg_pathway_df = kegg_pathway_df[['source', 'target', 'pathway_name']]
         kegg_df = kegg_pathway_df[kegg_pathway_df['pathway_name'].str.contains('signaling pathway|signaling pathways', case=False)]
         print(kegg_df['pathway_name'].value_counts())
+        print('----- NUMBER OF SIGNALING PATHWAYS IN KEGG: ' + str(len(kegg_df['pathway_name'].value_counts())) + ' -----')
         # import pdb; pdb.set_trace()
         kegg_df = kegg_df.rename(columns={'source': 'src', 'target': 'dest'})
         src_list = list(kegg_df['src'])
@@ -131,5 +132,5 @@ class ReadFile():
 # ReadFile().gdsc_rnaseq()
 # ReadFile().gdsc_cnv()
 
-# ReadFile().kegg()
+ReadFile().kegg()
 # ReadFile().drugbank()
