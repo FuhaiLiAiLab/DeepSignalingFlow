@@ -473,7 +473,7 @@ if __name__ == "__main__":
     cellline_name = 'NCI-H460'
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
-    top_n = 5
+    top_n = 1
     testloss_topminobj = testloss_topminobj_list[top_n - 1]
     testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
 
