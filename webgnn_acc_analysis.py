@@ -45,7 +45,7 @@ class PlotMSECorr():
         best_train_df.to_csv(path + '/BestTrainingPred.txt')
         best_test_df = pd.read_csv(path + '/TestPred' + str(min_test_id) + '.txt', delimiter=',')
         best_test_df.to_csv(path + '/BestTestPred.txt')
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         print('-------------BEST MODEL ID:' + str(min_test_id) + '-------------')
         print('BEST MODEL TRAIN LOSS: ', min_train_loss)
         print('BEST MODEL PEARSON CORR: ', train_epoch_pearson_list[min_test_id - 1])
@@ -115,15 +115,15 @@ if __name__ == "__main__":
     ###########################################################################################
     ############### ANALYSE [MSE_LOSS/PEARSON CORRELATION] FROM RECORDED FILES ################
     ###########################################################################################
-    path = './data/result/nci_webgnn/epoch_200'
-    # path = './data/result/oneil_webgnn/epoch_200'
-    epoch_num = 200
+    path = './data/result/nci_webgnn/epoch_500_4'
+    # path = './data/result/oneil_webgnn/epoch_500'
+    epoch_num = 500
     min_test_id = PlotMSECorr().rebuild_loss_pearson(path, epoch_num)
     # PlotMSECorr().plot_loss_pearson(path, epoch_num)
 
     # # ANALYSE DRUG EFFECT
     # print('ANALYSING DRUG EFFECT...')
-    # epoch_time = '200'
+    # epoch_time = '500'
     # best_model_num = str(min_test_id)
     # PlotMSECorr().plot_train_real_pred(path, best_model_num, epoch_time)
     # PlotMSECorr().plot_test_real_pred(path, best_model_num, epoch_time)

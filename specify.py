@@ -25,9 +25,9 @@ class Specify():
         test_pred_df_list = []
         for place_num in range(1, k + 1):
             if place_num == 1:
-                result_path = './data/result/nci_webgnn/epoch_200'
+                result_path = './data/result/nci_webgnn/epoch_500'
             else:
-                result_path = './data/result/nci_webgnn/epoch_200_' + str(place_num - 1)
+                result_path = './data/result/nci_webgnn/epoch_500_' + str(place_num - 1)
             test_pred_path = result_path + '/BestTestPred.txt'
             test_pred_df = pd.read_table(test_pred_path, delimiter=',')
             test_pred_df_list.append(test_pred_df)

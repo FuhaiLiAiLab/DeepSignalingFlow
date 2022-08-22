@@ -18,7 +18,7 @@ class ReformWeightAdj():
         kegg_gene_num_dict_df = pd.read_csv('./data/filtered_data/kegg_gene_num_dict.csv')
         kegg_gene_num_dict = dict(zip(kegg_gene_num_dict_df.kegg_gene, kegg_gene_num_dict_df.gene_num))
         # CALCULATE NODE DEGREE
-        averaged_fold_df = pd.read_csv('./analysis_nci/averaged_fold_kegg_weighted_gene_interaction.csv')
+        averaged_fold_df = pd.read_csv('./analysis_nci/gene_bind_weight_edge.csv')
         G = nx.Graph()
         for row in averaged_fold_df.itertuples():
             src_idx = row[1]
@@ -69,18 +69,18 @@ class ReformWeightAdj():
 
 
 if __name__ == "__main__":
-    # ###########################################################################################
-    # ########################### REBUILD MODEL AND ANALYSIS PARAMTERS ##########################
-    # ###########################################################################################
-    # ReformWeightAdj().form_node_degree()
+    ###########################################################################################
+    ########################### REBUILD MODEL AND ANALYSIS PARAMTERS ##########################
+    ###########################################################################################
+    ReformWeightAdj().form_node_degree()
 
 
     # ###########################################################################################
     # ################################# FILTER EDGES OR NODES ###################################
     # ###########################################################################################
-    edge_threshold = 0.1
+    edge_threshold = 0.2
     ReformWeightAdj().filter_edge(edge_threshold)
-    degree_threshold = 2
+    degree_threshold = 2.5
     ReformWeightAdj().filter_gene(degree_threshold)
 
 

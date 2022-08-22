@@ -89,7 +89,7 @@ if __name__ == "__main__":
     # fold_n = 5
     # # dataset = 'oneil'
     # dataset = 'nci'
-    # load_path = './data/result/' + dataset + '_webgnn/epoch_200_4/best_train_model.pt'
+    # load_path = './data/result/' + dataset + '_webgnn/epoch_500_4/best_train_model.pt'
     # model.load_state_dict(torch.load(load_path, map_location=device))
 
     # if os.path.exists('./analysis_' + dataset) == False:
