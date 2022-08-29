@@ -281,6 +281,7 @@ class RecheckFinal():
         tail_cell_drug_dl_input_df.to_csv('../data/filtered_data/final_dl_input.csv', index=False, header=True)
         cell_line_list = sorted(list(set(tail_cell_drug_dl_input_df['Cell Line Name'])))
         print('----- NUMBER OF CELL LINES IN DEEP LEARNING INPUT: ' + str(len(cell_line_list)) + ' ------')
+        print(cell_line_list)
         # [RNA-Seq]
         tail_cell_gene_rna_df = pd.read_csv('../data/mid_gene/tail_cell_gene_rna.csv')
         tail_cell_gene_rna_df = tail_cell_gene_rna_df.replace(['missing'], 0.0)
@@ -292,7 +293,9 @@ class RecheckFinal():
         tail_gene_drug_drugbank_df = pd.read_csv('../data/mid_drug/tail_gene_drug_drugbank.csv')
         tail_gene_drug_drugbank_df = tail_gene_drug_drugbank_df.sort_values(by=['Drug', 'Target'])
         tail_gene_drug_drugbank_df.to_csv('../data/filtered_data/final_drugbank.csv', index=False, header=True)
-        print(len(set(list(tail_gene_drug_drugbank_df['Drug']))))
+        tail_gene_drug_drugbank_genelist = set(list(tail_gene_drug_drugbank_df['Target']))
+        print('----- NUMBER OF GENEs IN DRUGBANK: ' + str(len(tail_gene_drug_drugbank_genelist)) + ' ------')
+        print('----- NUMBER OF DRUGs IN DRUGBANK: ' + str(len(set(list(tail_gene_drug_drugbank_df['Drug'])))) + ' ------')
 
 
 if os.path.exists('../data/mid_gene') == False:
