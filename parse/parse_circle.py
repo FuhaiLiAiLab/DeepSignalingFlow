@@ -274,6 +274,13 @@ class RecheckFinal():
         recheck_cell_line = [cell_line for cell_line in tail_cell_gene_rna_cell_list if cell_line not in tail_cell_drug_dl_input_cell_list]
         if len(recheck_cell_line)==0 : print('NO MORE CHECK NEEDED')
 
+    def recheck_original_pathway(self):
+        # CHECK [Signaling Pathways]
+        up_kegg_path_df = pd.read_csv('../data/init_data/up_kegg_path.csv')
+        up_kegg_path_list = sorted(list(set(up_kegg_path_df['path'])))
+        print('----- NUMBER OF CELL LINES IN DEEP LEARNING INPUT: ' + str(len(up_kegg_path_list)) + ' ------')
+        print(up_kegg_path_list)
+
     def final(self):
         # [DeepLearningInput]
         tail_cell_drug_dl_input_df = pd.read_csv('../data/mid_drug/tail_cell_drug_dl_input.csv')
@@ -296,6 +303,7 @@ class RecheckFinal():
         tail_gene_drug_drugbank_genelist = set(list(tail_gene_drug_drugbank_df['Target']))
         print('----- NUMBER OF GENEs IN DRUGBANK: ' + str(len(tail_gene_drug_drugbank_genelist)) + ' ------')
         print('----- NUMBER OF DRUGs IN DRUGBANK: ' + str(len(set(list(tail_gene_drug_drugbank_df['Drug'])))) + ' ------')
+        print(sorted(list(set(tail_gene_drug_drugbank_df['Drug']))))
 
 
 if os.path.exists('../data/mid_gene') == False:
@@ -324,4 +332,5 @@ dataset = 'almanac'
 # DrugAnnotation().dlinput_drugbank_drug_intersect()
 
 # RecheckFinal().recheck_cell_line()
+# RecheckFinal().recheck_original_pathway()
 RecheckFinal().final()
