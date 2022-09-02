@@ -419,7 +419,7 @@ class NetAnalyse():
                     edgelist = bind_graph_target_between_3links,
                     connectionstyle = 'arc3, rad = 0.3',
                     edge_color = 'red',
-                    width = 1.5)
+                    width = 0.5)
         
         # HIGHLIGHT [drug-target-betweeness] EDGES (cutoff==5)
         if topmin_loss == False:
@@ -462,13 +462,15 @@ class NetAnalyse():
         # plt.show()
         if cellline_name == 'A549/ATCC':
             cellline_name = 'A549'
+        if os.path.exists('./analysis_nci/' + cellline_name) == False:
+            os.mkdir('./analysis_nci/' + cellline_name)
         if topmin_loss == True:
-            filename = './analysis_nci/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '.png'
+            filename = './analysis_nci/' + cellline_name + '/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '.png'
         else:
-            filename = './analysis_nci/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
+            filename = './analysis_nci/' + cellline_name + '/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
         plt.savefig(filename, dpi = 600)
         plt.close()
-
+        return path4_weight_count
 
 
 if __name__ == "__main__":
@@ -478,9 +480,61 @@ if __name__ == "__main__":
     #####
     node_threshold = 0.6
     edge_threshold = 0.2
+    # cellline_name = '786-0'
+    # cellline_name = 'A498'
+    # cellline_name = 'A549/ATCC'
+    # cellline_name = 'ACHN'
+    # cellline_name = 'BT-549'
+    # cellline_name = 'CAKI-1'
+    # cellline_name = 'CCRF-CEM'
+    cellline_name = 'COLO 205'
     # cellline_name = 'DU-145'
-    cellline_name = 'PC-3'
+    # cellline_name = 'EKVX'
+    # cellline_name = 'HCC-2998'
+    # cellline_name = 'HCT-116'
+    # cellline_name = 'HCT-15'
+    # cellline_name = 'HOP-62'
+    # cellline_name = 'HOP-92'
+    # cellline_name = 'HS 578T'
+    # cellline_name = 'HT29'
+    # cellline_name = 'IGROV1'
+    # cellline_name = 'K-562'
+    # cellline_name = 'KM12'
+    # cellline_name = 'LOX IMVI'
+    # cellline_name = 'M14'
+    # cellline_name = 'MCF7'
+    # cellline_name = 'MDA-MB-231/ATCC'
+    # cellline_name = 'MDA-MB-468'
+    # cellline_name = 'MOLT-4'
+    # cellline_name = 'NCI-H226'
+    # cellline_name = 'NCI-H23'
+    # cellline_name = 'NCI-H322M'
     # cellline_name = 'NCI-H460'
+    # cellline_name = 'NCI-H522'
+    # cellline_name = 'OVCAR-3'
+    # cellline_name = 'OVCAR-4'
+    # cellline_name = 'OVCAR-5'
+    # cellline_name = 'OVCAR-8'
+    # cellline_name = 'PC-3'
+    # cellline_name = 'RPMI-8226'
+    # cellline_name = 'RXF 393'
+    # cellline_name = 'SF-268'
+    # cellline_name = 'SF-295'
+    # cellline_name = 'SF-539'
+    # cellline_name = 'SK-MEL-2'
+    # cellline_name = 'SK-MEL-28'
+    # cellline_name = 'SK-MEL-5'
+    # cellline_name = 'SK-OV-3'
+    # cellline_name = 'SN12C'
+    # cellline_name = 'SNB-75'
+    # cellline_name = 'SR'
+    # cellline_name = 'SW-620'
+    # cellline_name = 'T-47D'
+    # cellline_name = 'TK-10'
+    # cellline_name = 'U251'
+    # cellline_name = 'UACC-257'
+    # cellline_name = 'UACC-62'
+    # cellline_name = 'UO-31'
 
     intersection_name_list, intersection_list, intersection_degree_list = \
         NetAnalyse().plot_target_cell_gene(cellline_name, node_threshold)
@@ -491,11 +545,20 @@ if __name__ == "__main__":
     topmin_loss = True
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
-    top_n = 5
-    testloss_topminobj = testloss_topminobj_list[top_n - 1]
-    testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
 
-    cellline_specific_drugbank_df = NetAnalyse().drug_target_interaction(cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj)
+    path4_weight_count_list = []
+    top_n_list = [1, 2, 3, 4, 5]
+    for top_n in top_n_list:
+        testloss_topminobj = testloss_topminobj_list[top_n - 1]
+        testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
 
-    NetAnalyse().plot_cell_net2(node_threshold, edge_threshold,
-        intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n)
+        cellline_specific_drugbank_df = NetAnalyse().drug_target_interaction(cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj)
+
+        path4_weight_count = NetAnalyse().plot_cell_net2(node_threshold, edge_threshold,
+            intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n)
+        path4_weight_count_list.append(path4_weight_count)
+
+    print('----- LIST FOR SUM OF WEIGHTS FOR PATH 4: -----')
+    print(path4_weight_count_list)
+
+        
