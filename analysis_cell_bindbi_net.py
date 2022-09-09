@@ -37,7 +37,7 @@ class NetAnalyse():
         plt.ylabel('count')
         plt.show()
 
-    def plot_target_cell_gene(self, cellline_name, node_threshold):
+    def plot_target_cell_gene(self, cellline_name, node_threshold, cell_node_threshold):
         # READ INFORMATION FROM FILE
         gene_bind_weight_edge_df = pd.read_csv('./analysis_nci/gene_bind_weight_edge.csv')
         gene_bind_degree_df = pd.read_csv('./analysis_nci/gene_weight_bind_degree.csv')
@@ -61,6 +61,8 @@ class NetAnalyse():
         gene_targeted_num_list = list(set(final_drugbank_df['Target']))
         print('----- TARGETED GENES BY DRUGS -----')
         print(gene_targeted_name_list)
+        
+        # import pdb; pdb.set_trace()
 
         # BUILD bind NODES DEGREE [DELETION LIST]
         filter_node_count = 0
@@ -69,7 +71,8 @@ class NetAnalyse():
         bind_node_name_list = []
         bind_node_degree_list = []
         for bind_row in gene_bind_degree_df.itertuples():
-            if bind_row[4] <= node_threshold:
+            if bind_row[3] <= node_threshold and bind_row[4] <= cell_node_threshold:
+                # import pdb; pdb.set_trace()
                 bind_node_deletion_index_list.append(bind_row[1])
             else:
                 filter_node_count += 1
@@ -101,8 +104,6 @@ class NetAnalyse():
         drug_map_num_list = list(drug_map_df['drug_num'])
         drugbank_druglist = list(drug_map_df['Drug'])
         drugbank_drug_dict = {drugbank_druglist[i - 1] : drug_map_num_list[i - 1] for i in range(1, len(drugbank_druglist)+1)}
-
-        # import pdb; pdb.set_trace() 
 
         print('\n-------- TEST ' + cellline_name + ' --------\n')
 
@@ -140,7 +141,7 @@ class NetAnalyse():
             print(cellline_specific_drugbank_df)
             return cellline_specific_drugbank_df
 
-    def plot_cell_net2(self, node_threshold, edge_threshold, 
+    def plot_cell_net2(self, node_threshold, cell_node_threshold, edge_threshold, 
                 intersection_list, intersection_degree_list, cellline_specific_drugbank_df,
                 topmin_loss, seed, cellline_name, top_n):
         # READ INFORMATION FROM FILE
@@ -166,7 +167,7 @@ class NetAnalyse():
         bind_node_name_list = []
         bind_node_degree_dict = {}
         for bind_row in gene_bind_degree_df.itertuples():
-            if bind_row[4] <= node_threshold:
+            if bind_row[3] <= node_threshold and bind_row[4] <= cell_node_threshold:
                 bind_node_deletion_index_list.append(bind_row[1])
             else:
                 filter_node_count += 1
@@ -305,28 +306,33 @@ class NetAnalyse():
         print('----- SUM OF WEIGHTS FOR PATH 4: -----')
         print(path4_weight_count)
 
-        if topmin_loss == False:
-            # cutoff==5
-            cutoff = 5
-            path5_num_count = 0
-            bind_graph_target_between_5links = []
-            path5 = nx.all_simple_paths(bind_filtered_digraph, source=drug_1, target=drug_2, cutoff=5)
-            path5_lists = list(path5)
-            # path_lists = path_lists[0:3]
-            # print(path5_lists)
-            for path in path5_lists:
-                if path in path4_lists:
-                    continue
-                path5_num_count += 1
-                for i in range(1, cutoff):
-                    node_u = path[i - 1]
-                    node_v = path[i]
-                    bind_graph_target_between_5links.append((node_u, node_v))
-            bind_graph_target_between_5links = list(set(bind_graph_target_between_5links))
-            print('----- DRUG BETWEENESS LINKS OF PATH 5: -----')
-            print(bind_graph_target_between_5links)
-            print('----- NUMBERS OF PATH 5: -----')
-            print(path5_num_count)
+        # if topmin_loss == False:
+        # cutoff==5
+        cutoff = 5
+        path5_num_count = 0
+        path5_weight_count = 0
+        bind_graph_target_between_5links = []
+        path5 = nx.all_simple_paths(bind_filtered_digraph, source=drug_1, target=drug_2, cutoff=5)
+        path5_lists = list(path5)
+        # path_lists = path_lists[0:3]
+        # print(path5_lists)
+        for path in path5_lists:
+            if path in path4_lists:
+                continue
+            path5_num_count += 1
+            for i in range(1, cutoff):
+                node_u = path[i - 1]
+                node_v = path[i]
+                bind_graph_target_between_5links.append((node_u, node_v))
+                this_weight = bind_filtered_digraph[node_u][node_v]['weight']
+                path5_weight_count += this_weight
+        bind_graph_target_between_5links = list(set(bind_graph_target_between_5links))
+        print('----- DRUG BETWEENESS LINKS OF PATH 5: -----')
+        print(bind_graph_target_between_5links)
+        print('----- NUMBERS OF PATH 5: -----')
+        print(path5_num_count)
+        print('----- SUM OF WEIGHTS FOR PATH 5: -----')
+        print(path5_weight_count)
 
         # DRAW GRAPHS WITH CERTAIN TYPE
         pos = nx.spring_layout(bind_filtered_digraph, 
@@ -470,7 +476,7 @@ class NetAnalyse():
             filename = './analysis_nci/' + cellline_name + '/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
         plt.savefig(filename, dpi = 600)
         plt.close()
-        return path4_weight_count
+        return path4_weight_count, path5_weight_count
 
 
 if __name__ == "__main__":
@@ -478,16 +484,17 @@ if __name__ == "__main__":
     # NetAnalyse().statistic_net()
     
     #####
-    node_threshold = 0.6
+    node_threshold = 1.0
+    cell_node_threshold = 2.0
     edge_threshold = 0.2
     # cellline_name = '786-0'
     # cellline_name = 'A498'
     # cellline_name = 'A549/ATCC'
-    # cellline_name = 'ACHN'
+    cellline_name = 'ACHN'
     # cellline_name = 'BT-549'
     # cellline_name = 'CAKI-1'
     # cellline_name = 'CCRF-CEM'
-    cellline_name = 'COLO 205'
+    # cellline_name = 'COLO 205'
     # cellline_name = 'DU-145'
     # cellline_name = 'EKVX'
     # cellline_name = 'HCC-2998'
@@ -537,16 +544,17 @@ if __name__ == "__main__":
     # cellline_name = 'UO-31'
 
     intersection_name_list, intersection_list, intersection_degree_list = \
-        NetAnalyse().plot_target_cell_gene(cellline_name, node_threshold)
+        NetAnalyse().plot_target_cell_gene(cellline_name, node_threshold, cell_node_threshold)
 
     # SET TRAINING/TEST SET
     top_k = 20
     seed = 187
-    topmin_loss = True
+    topmin_loss = False
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
 
     path4_weight_count_list = []
+    path5_weight_count_list = []
     top_n_list = [1, 2, 3, 4, 5]
     for top_n in top_n_list:
         testloss_topminobj = testloss_topminobj_list[top_n - 1]
@@ -554,11 +562,14 @@ if __name__ == "__main__":
 
         cellline_specific_drugbank_df = NetAnalyse().drug_target_interaction(cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj)
 
-        path4_weight_count = NetAnalyse().plot_cell_net2(node_threshold, edge_threshold,
+        path4_weight_count, path5_weight_count = NetAnalyse().plot_cell_net2(node_threshold, cell_node_threshold, edge_threshold,
             intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n)
         path4_weight_count_list.append(path4_weight_count)
+        path5_weight_count_list.append(path5_weight_count)
 
     print('----- LIST FOR SUM OF WEIGHTS FOR PATH 4: -----')
     print(path4_weight_count_list)
+    print('----- LIST FOR SUM OF WEIGHTS FOR PATH 5: -----')
+    print(path5_weight_count_list)
 
         
