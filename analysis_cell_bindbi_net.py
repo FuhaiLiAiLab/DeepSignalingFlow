@@ -334,6 +334,40 @@ class NetAnalyse():
         print('----- SUM OF WEIGHTS FOR PATH 5: -----')
         print(path5_weight_count)
 
+        #
+        #
+        # Save the bind_graph_target_between_4links
+        if cellline_name == 'A549/ATCC':
+            cellline_name = 'A549'
+        elif cellline_name == 'MDA-MB-231/ATCC':
+            cellline_name = 'MDA-MB-231'
+        elif cellline_name == 'HS 578T':
+            cellline_name = 'HS-578T'
+        if os.path.exists('./analysis_nci/' + cellline_name) == False:
+            os.mkdir('./analysis_nci/' + cellline_name)
+
+        bind_filtered_digraph_df = pd.DataFrame(bind_filtered_digraph.edges(), columns=['From','To'])
+        bind_filtered_digraph_rev_df = pd.DataFrame(bind_filtered_digraph.edges(), columns=['To','From'])
+        graph_df = pd.concat([bind_filtered_digraph_df, bind_filtered_digraph_rev_df]).reset_index(drop=True)
+
+        bind_graph_target_between_4links_df = pd.DataFrame(bind_graph_target_between_4links, columns=['From','To'])
+        bind_graph_target_between_4links_rev_df = pd.DataFrame(bind_graph_target_between_4links, columns=['To','From'])
+        graph_4links_df = pd.concat([bind_graph_target_between_4links_df, bind_graph_target_between_4links_rev_df]).reset_index(drop=True)
+        graph_4links_df['Links_4'] = ['path4_links'] * len(graph_4links_df)
+
+        bind_graph_target_between_5links_df = pd.DataFrame(bind_graph_target_between_5links, columns=['From','To'])
+        bind_graph_target_between_5links_rev_df = pd.DataFrame(bind_graph_target_between_5links, columns=['To','From'])
+        graph_5links_df = pd.concat([bind_graph_target_between_5links_df, bind_graph_target_between_5links_rev_df]).reset_index(drop=True)
+        graph_5links_df['Links_5'] = ['path5_links'] * len(graph_5links_df)
+        
+
+        graph_df = graph_df.merge(graph_4links_df, on=['From', 'To'], how='left')
+        graph_df = graph_df.merge(graph_5links_df, on=['From', 'To'], how='left')
+        gene_bind_weight_edge_df = gene_bind_weight_edge_df.rename(columns={'src': 'From', 'dest': 'To'})
+        graph_df = graph_df.merge(gene_bind_weight_edge_df, on=['From', 'To'], how='left')
+        graph_df.to_csv('./analysis_nci/' + cellline_name + '/graph.csv', index=False, header=True)
+
+        # import pdb; pdb.set_trace()
         # DRAW GRAPHS WITH CERTAIN TYPE
         pos = nx.spring_layout(bind_filtered_digraph, 
                                 k = 15.0, 
@@ -466,10 +500,7 @@ class NetAnalyse():
             + ' genes on ' + cellline_name + ' cell line'
         plt.title(titlename) 
         # plt.show()
-        if cellline_name == 'A549/ATCC':
-            cellline_name = 'A549'
-        if os.path.exists('./analysis_nci/' + cellline_name) == False:
-            os.mkdir('./analysis_nci/' + cellline_name)
+        
         if topmin_loss == True:
             filename = './analysis_nci/' + cellline_name + '/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '.png'
         else:
@@ -479,7 +510,37 @@ class NetAnalyse():
         return path4_weight_count, path5_weight_count
 
 
+def plot_graph(cellline_name, node_threshold, cell_node_threshold, edge_threshold, topmin_loss, seed):
+    intersection_name_list, intersection_list, intersection_degree_list = \
+        NetAnalyse().plot_target_cell_gene(cellline_name, node_threshold, cell_node_threshold)
+
+    # GET TESTLOSS TOP/BOTTOM Object List
+    testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
+
+    path4_weight_count_list = []
+    path5_weight_count_list = []
+    top_n_list = [1, 2, 3, 4, 5]
+    for top_n in top_n_list:
+        testloss_topminobj = testloss_topminobj_list[top_n - 1]
+        testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
+
+        cellline_specific_drugbank_df = NetAnalyse().drug_target_interaction(cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj)
+
+        path4_weight_count, path5_weight_count = NetAnalyse().plot_cell_net2(node_threshold, cell_node_threshold, edge_threshold,
+            intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n)
+        path4_weight_count_list.append(path4_weight_count)
+        path5_weight_count_list.append(path5_weight_count)
+
+    print('----- LIST FOR SUM OF WEIGHTS FOR PATH 4: -----')
+    print(path4_weight_count_list)
+    print('----- LIST FOR SUM OF WEIGHTS FOR PATH 5: -----')
+    print(path5_weight_count_list)
+
+
 if __name__ == "__main__":
+    import os
+    os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
     ###### BASICAL PARAMETERS IN FILES
     # NetAnalyse().statistic_net()
     
@@ -487,10 +548,29 @@ if __name__ == "__main__":
     node_threshold = 1.0
     cell_node_threshold = 2.0
     edge_threshold = 0.2
+
+    #####
+    # SET TRAINING/TEST SET
+    top_k = 20
+    seed = 187
+    topmin_loss = True
+    # topmin_loss = False
+
+    cellline_name_list = ['786-0', 'A498', 'A549/ATCC', 'ACHN', 'BT-549', 'CAKI-1', 
+                          'CCRF-CEM', 'COLO 205', 'DU-145', 'EKVX', 'HCC-2998', 'HCT-116', 
+                          'HCT-15', 'HOP-62', 'HOP-92', 'HS 578T', 'HT29', 'IGROV1', 
+                          'K-562', 'KM12', 'LOX IMVI', 'M14', 'MCF7', 'MDA-MB-231/ATCC', 
+                          'MDA-MB-468', 'MOLT-4', 'NCI-H226', 'NCI-H23', 'NCI-H322M', 'NCI-H460', 
+                          'NCI-H522', 'OVCAR-3', 'OVCAR-4', 'OVCAR-5', 'OVCAR-8', 'PC-3', 
+                          'RPMI-8226', 'RXF 393', 'SF-268', 'SF-295', 'SF-539', 'SK-MEL-2', 
+                          'SK-MEL-28', 'SK-MEL-5', 'SK-OV-3', 'SN12C', 'SNB-75', 'SR', 
+                          'SW-620', 'T-47D', 'TK-10', 'U251', 'UACC-257', 'UACC-62', 'UO-31']
+
+
     # cellline_name = '786-0'
     # cellline_name = 'A498'
     # cellline_name = 'A549/ATCC'
-    cellline_name = 'ACHN'
+    # cellline_name = 'ACHN'
     # cellline_name = 'BT-549'
     # cellline_name = 'CAKI-1'
     # cellline_name = 'CCRF-CEM'
@@ -502,7 +582,7 @@ if __name__ == "__main__":
     # cellline_name = 'HCT-15'
     # cellline_name = 'HOP-62'
     # cellline_name = 'HOP-92'
-    # cellline_name = 'HS 578T'
+    cellline_name = 'HS 578T'
     # cellline_name = 'HT29'
     # cellline_name = 'IGROV1'
     # cellline_name = 'K-562'
@@ -542,34 +622,4 @@ if __name__ == "__main__":
     # cellline_name = 'UACC-257'
     # cellline_name = 'UACC-62'
     # cellline_name = 'UO-31'
-
-    intersection_name_list, intersection_list, intersection_degree_list = \
-        NetAnalyse().plot_target_cell_gene(cellline_name, node_threshold, cell_node_threshold)
-
-    # SET TRAINING/TEST SET
-    top_k = 20
-    seed = 187
-    topmin_loss = False
-    # GET TESTLOSS TOP/BOTTOM Object List
-    testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
-
-    path4_weight_count_list = []
-    path5_weight_count_list = []
-    top_n_list = [1, 2, 3, 4, 5]
-    for top_n in top_n_list:
-        testloss_topminobj = testloss_topminobj_list[top_n - 1]
-        testloss_bottomminobj = testloss_bottomminobj_list[top_n - 1]
-
-        cellline_specific_drugbank_df = NetAnalyse().drug_target_interaction(cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj)
-
-        path4_weight_count, path5_weight_count = NetAnalyse().plot_cell_net2(node_threshold, cell_node_threshold, edge_threshold,
-            intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n)
-        path4_weight_count_list.append(path4_weight_count)
-        path5_weight_count_list.append(path5_weight_count)
-
-    print('----- LIST FOR SUM OF WEIGHTS FOR PATH 4: -----')
-    print(path4_weight_count_list)
-    print('----- LIST FOR SUM OF WEIGHTS FOR PATH 5: -----')
-    print(path5_weight_count_list)
-
-        
+    plot_graph(cellline_name, node_threshold, cell_node_threshold, edge_threshold, topmin_loss, seed)

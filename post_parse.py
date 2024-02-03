@@ -30,17 +30,18 @@ def split_k_fold(k):
 # input_random()
 # split_k_fold(k=5)
 
-# if os.path.exists('./data/form_data') == False:
-#     os.mkdir('./data/form_data')
-# k = 5
-# batch_size = 64
-# LoadData().load_all_split(batch_size, k)
 
-# ############## MOUDLE 2 ################
-# LoadData().load_adj_edgeindex()
+if os.path.exists('./data/form_data') == False:
+    os.mkdir('./data/form_data')
+batch_size = 64
+LoadData().load_all_split(batch_size, k)
 
-################ MOUDLE 3 ################
-# FORM N-TH FOLD TRAINING DATASET
 k = 5
-n_fold = 5
-LoadData().load_train_test(k, n_fold)
+for n_fold in range(1, k + 1):
+    # ############## MOUDLE 2 ################
+    print('split_input_' + str(n_fold) + '.csv')
+    LoadData().load_adj_edgeindex()
+
+    ################ MOUDLE 3 ################
+    # FORM N-TH FOLD TRAINING DATASET
+    LoadData().load_train_test(k, n_fold)
