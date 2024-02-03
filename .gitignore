@@ -4,9 +4,6 @@ __pycache__/
 *.log
 .vscode/
 
-# data-oneil/
-/data-oneil
-
 # data/
 /data/raw_data
 /data/form_data
@@ -20,3 +17,16 @@ __pycache__/
 # Result
 # /data/result
 /data/result/nci_webgnn-200
+
+# data-oneil/
+/data-oneil/raw_data
+/data-oneil/form_data
+
+# Middle Data Processes
+/data-oneil/init_data
+/data-oneil/init_manual_data
+/data-oneil/map_cell_line
+/data-oneil/map_manual_cell_line
+
+# Result
+/data-oneil/result
