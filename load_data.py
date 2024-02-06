@@ -8,25 +8,26 @@ from scipy import sparse
 from sklearn.model_selection import train_test_split
 
 class LoadData():
-    def __init__(self):
+    def __init__(self, dataset):
+        self.dataset = dataset
         pass
 
     def load_batch(self, index, upper_index, place_num, drug_feature=False):
         # PRELOAD EACH SPLIT DATASET
-        split_input_df = pd.read_csv('./data/filtered_data/split_input_' + str(place_num + 1) + '.csv')
+        split_input_df = pd.read_csv('./' + self.dataset+ '/filtered_data/split_input_' + str(place_num + 1) + '.csv')
         num_feature = 4
-        final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+        final_annotation_gene_df = pd.read_csv('./' + self.dataset+ '/filtered_data/kegg_gene_annotation.csv')
         gene_name_list = list(final_annotation_gene_df['kegg_gene'])
         print('READING GENE FEATURES FILES ...')
-        final_gdsc_rna_df = pd.read_csv('./data/filtered_data/final_rna.csv')
-        final_gdsc_cnv_df = pd.read_csv('./data/filtered_data/final_cnv.csv')
+        final_gdsc_rna_df = pd.read_csv('./' + self.dataset+ '/filtered_data/final_rna.csv')
+        final_gdsc_cnv_df = pd.read_csv('./' + self.dataset+ '/filtered_data/final_cnv.csv')
         num_gene, num_cellline = final_gdsc_rna_df.shape
         # CONVERT [drugbank.csv] TO A LIST
         print('READING DRUGBANK ...')
-        final_drugbank_df = pd.read_csv('./data/filtered_data/final_drugbank.csv')
+        final_drugbank_df = pd.read_csv('./' + self.dataset+ '/filtered_data/final_drugbank.csv')
         final_drugbank_comlist = final_drugbank_df.values.tolist()
         print('READING DRUGDICT ...')
-        drug_num_dict_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+        drug_num_dict_df = pd.read_csv('./' + self.dataset+ '/filtered_data/drug_num_dict.csv')
         drug_dict = dict(zip(drug_num_dict_df.Drug, drug_num_dict_df.drug_num))
         num_drug = len(drug_dict)
         print('READING FINISHED ...')
@@ -91,18 +92,18 @@ class LoadData():
 
 
     def load_all_split(self, batch_size, k):
-        form_data_path = './data/form_data'
+        form_data_path = './' + self.dataset+ '/form_data'
         # LOAD 100 PERCENT DATA
         print('LOADING ALL SPLIT DATA...')
         # FIRST LOAD EACH SPLIT DATA
         for place_num in range(k):
-            split_input_df = pd.read_csv('./data/filtered_data/split_input_' + str(place_num + 1) + '.csv')
+            split_input_df = pd.read_csv('./' + self.dataset+ '/filtered_data/split_input_' + str(place_num + 1) + '.csv')
             input_num, input_dim = split_input_df.shape
             num_feature = 4
-            final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+            final_annotation_gene_df = pd.read_csv('./' + self.dataset+ '/filtered_data/kegg_gene_annotation.csv')
             gene_name_list = list(final_annotation_gene_df['kegg_gene'])
             num_gene = len(gene_name_list)
-            drug_num_dict_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+            drug_num_dict_df = pd.read_csv('./' + self.dataset+ '/filtered_data/drug_num_dict.csv')
             drug_dict = dict(zip(drug_num_dict_df.Drug, drug_num_dict_df.drug_num))
             num_drug = len(drug_dict)
             x_split = np.zeros((1, num_feature * (num_gene + num_drug)))
@@ -113,7 +114,8 @@ class LoadData():
                     upper_index = index + batch_size
                 else:
                     upper_index = input_num
-                x_batch, y_batch, drug_batch = LoadData().load_batch(index, upper_index, place_num)
+                    datset = self.dataset
+                x_batch, y_batch, drug_batch = LoadData(dataset).load_batch(index, upper_index, place_num)
                 x_split = np.vstack((x_split, x_batch))
                 y_split = np.vstack((y_split, y_batch))
                 drug_split = np.vstack((drug_split, drug_batch))
@@ -130,12 +132,12 @@ class LoadData():
             
 
     def load_train_test(self, k, n_fold):
-        form_data_path = './data/form_data'
+        form_data_path = './' + self.dataset+ '/form_data'
         num_feature = 4
-        final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+        final_annotation_gene_df = pd.read_csv('./' + self.dataset+ '/filtered_data/kegg_gene_annotation.csv')
         gene_name_list = list(final_annotation_gene_df['kegg_gene'])
         num_gene = len(gene_name_list)
-        drug_num_dict_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+        drug_num_dict_df = pd.read_csv('./' + self.dataset+ '/filtered_data/drug_num_dict.csv')
         drug_dict = dict(zip(drug_num_dict_df.Drug, drug_num_dict_df.drug_num))
         num_drug = len(drug_dict)
         xTr = np.zeros((1, num_feature * (num_gene + num_drug)))
@@ -175,12 +177,12 @@ class LoadData():
         np.save(form_data_path + '/drugTe' + str(n_fold) + '.npy', drugTe)
 
     def combine_whole_dataset(self, k):
-        form_data_path = './data/form_data'
+        form_data_path = './' + self.dataset+ '/form_data'
         num_feature = 4
-        final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+        final_annotation_gene_df = pd.read_csv('./' + self.dataset+ '/filtered_data/kegg_gene_annotation.csv')
         gene_name_list = list(final_annotation_gene_df['kegg_gene'])
         num_gene = len(gene_name_list)
-        drug_num_dict_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+        drug_num_dict_df = pd.read_csv('./' + self.dataset+ '/filtered_data/drug_num_dict.csv')
         drug_dict = dict(zip(drug_num_dict_df.Drug, drug_num_dict_df.drug_num))
         num_drug = len(drug_dict)
         xAll = np.zeros((1, num_feature * (num_gene + num_drug)))
@@ -207,15 +209,15 @@ class LoadData():
         np.save(form_data_path + '/drugAll.npy', drugAll)
     
     def load_adj_edgeindex(self):
-        form_data_path = './data/form_data'
+        form_data_path = './' + self.dataset+ '/form_data'
         # FORM A WHOLE ADJACENT MATRIX
-        gene_num_df = pd.read_csv('./data/filtered_data/kegg_gene_num_interaction.csv')
+        gene_num_df = pd.read_csv('./' + self.dataset+ '/filtered_data/kegg_gene_num_interaction.csv')
         src_gene_list = list(gene_num_df['src'])
         dest_gene_list = list(gene_num_df['dest'])
-        final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+        final_annotation_gene_df = pd.read_csv('./' + self.dataset+ '/filtered_data/kegg_gene_annotation.csv')
         gene_name_list = list(final_annotation_gene_df['kegg_gene'])
         num_gene = len(gene_name_list)
-        dict_drug_num = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+        dict_drug_num = pd.read_csv('./' + self.dataset+ '/filtered_data/drug_num_dict.csv')
         num_drug = dict_drug_num.shape[0]
         num_node = num_gene + num_drug
         adj = np.zeros((num_node, num_node))
@@ -227,7 +229,7 @@ class LoadData():
             adj[col_idx, row_idx] = 1 # WHETHER WE WANT ['sym']
         # import pdb; pdb.set_trace()
         # DRUG_TARGET ADJACENT MATRIX
-        drugbank_num_df = pd.read_csv('./data/filtered_data/final_drugbank_num.csv')
+        drugbank_num_df = pd.read_csv('./' + self.dataset+ '/filtered_data/final_drugbank_num.csv')
         drugbank_drug_list = list(drugbank_num_df['Drug'])
         drugbank_target_list = list(drugbank_num_df['Target'])
         for row in drugbank_num_df.itertuples():
@@ -253,8 +255,50 @@ class LoadData():
         np.save(form_data_path + '/edge_index.npy', edge_index)
 
 
-# LoadData().load_path_adj_edgeindex()
 
-# print('-----------')
-# LoadData().load_path_adj_khop_mask_edgeindex(khop_num=3)
-# LoadData().combine_whole_dataset(k=5)
+
+# RANDOMIZE THE [final_NCI60_DeepLearningInput]
+def input_random(dataset):
+    final_input_df = pd.read_csv('./' + dataset + '/filtered_data/final_dl_input.csv')
+    random_final_input_df = final_input_df.sample(frac = 1)
+    random_final_input_df.to_csv('./' + dataset + '/filtered_data/random_final_dl_input.csv', index = False, header = True)
+
+# SPLIT DEEP LEARNING INPUT INTO TRAINING AND TEST
+def split_k_fold(k, dataset):
+    random_final_dl_input_df = pd.read_csv('./' + dataset + '/filtered_data/random_final_dl_input.csv')
+    num_points = random_final_dl_input_df.shape[0]
+    num_div = int(num_points / k)
+    num_div_list = [i * num_div for i in range(0, k)]
+    num_div_list.append(num_points)
+    # SPLIT [RandomFinal_NCI60_DeepLearningInput] INTO [k] FOLDS
+    for place_num in range(k):
+        low_idx = num_div_list[place_num]
+        high_idx = num_div_list[place_num + 1]
+        print('\n--------TRAIN-TEST SPLIT WITH TEST FROM ' + str(low_idx) + ' TO ' + str(high_idx) + '--------')
+        split_input_df = random_final_dl_input_df[low_idx : high_idx]
+        split_input_df.to_csv('./' + dataset + '/filtered_data/split_input_' + str(place_num + 1) + '.csv', index = False, header = True)
+
+
+
+if __name__ == '__main__':
+    # ############## MOUDLE 1 ################
+    k = 5
+    # dataset = 'data-nci'
+    dataset = 'data-oneil'
+
+    # input_random(dataset)
+    # split_k_fold(k, dataset)
+
+    if os.path.exists('./' + dataset + '/form_data') == False:
+        os.mkdir('./' + dataset + '/form_data')
+    batch_size = 64
+    LoadData(dataset).load_all_split(batch_size, k)
+
+    for n_fold in range(1, k + 1):
+        # ############## MOUDLE 2 ################
+        print('split_input_' + str(n_fold) + '.csv')
+        LoadData(dataset).load_adj_edgeindex()
+
+        ################ MOUDLE 3 ################
+        # FORM N-TH FOLD TRAINING DATASET
+        LoadData(dataset).load_train_test(k, n_fold)

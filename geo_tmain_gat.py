@@ -57,9 +57,10 @@ def arg_parse():
                         batch_size = 64,
                         num_workers = 1,
                         num_epochs = 100,
-                        input_dim = 8,
-                        hidden_dim = 24,
-                        output_dim = 24,
+                        input_dim = 4,
+                        hidden_dim = 8,
+                        output_dim = 8,
+                        num_head = 1,
                         decoder_dim = 70,
                         dropout = 0.01)
     return parser.parse_args()
@@ -86,28 +87,28 @@ def learning_rate_schedule(args, dl_input_num, iteration_num, e1, e2, e3, e4):
     return learning_rate
 
 
-def build_geogat_model(args, device):
+def build_geogat_model(args, device, dataset):
     print('--- BUILDING UP GAT MODEL ... ---')
     # GET PARAMETERS
     # [num_gene, num_drug, (adj)node_num]
-    final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+    final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     gene_name_list = list(final_annotation_gene_df['kegg_gene'])
     num_gene = len(gene_name_list)
-    drug_num_dict_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+    drug_num_dict_df = pd.read_csv('./' + dataset + '/filtered_data/drug_num_dict.csv')
     drug_dict = dict(zip(drug_num_dict_df.Drug, drug_num_dict_df.drug_num))
     num_drug = len(drug_dict)
     node_num = num_gene + num_drug
     # [num_gene_edge, num_drug_edge]
-    gene_num_df = pd.read_csv('./data/filtered_data/kegg_gene_num_interaction.csv')
+    gene_num_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_num_interaction.csv')
     gene_num_df = gene_num_df.drop_duplicates()
-    drugbank_num_df = pd.read_csv('./data/filtered_data/final_drugbank_num_sym.csv')
+    drugbank_num_df = pd.read_csv('./' + dataset + '/filtered_data/final_drugbank_num_sym.csv')
     num_gene_edge = gene_num_df.shape[0]
     num_drug_edge = drugbank_num_df.shape[0]
     num_edge = num_gene_edge + num_drug_edge
     # import pdb; pdb.set_trace()
     # BUILD UP MODEL
     model = GATDecoder(input_dim=args.input_dim, hidden_dim=args.hidden_dim, embedding_dim=args.output_dim, 
-                decoder_dim=args.decoder_dim, num_head=1, device=device)
+                decoder_dim=args.decoder_dim, num_head=args.num_head, device=device)
     model = model.to(device)
     return model
 
@@ -123,7 +124,7 @@ def sparse_mx_to_torch_sparse_tensor(sparse_mx):
 
 
 def train_geogat_model(dataset_loader, model, device, args, learning_rate):
-    optimizer = torch.optim.Adam(filter(lambda p : p.requires_grad, model.parameters()), lr=learning_rate, eps=1e-7, weight_decay=1e-15)
+    optimizer = torch.optim.Adam(filter(lambda p : p.requires_grad, model.parameters()), lr=learning_rate, eps=1e-7, weight_decay=1e-6)
     batch_loss = 0
     for batch_idx, data in enumerate(dataset_loader):
         optimizer.zero_grad()
@@ -141,25 +142,24 @@ def train_geogat_model(dataset_loader, model, device, args, learning_rate):
     return model, batch_loss, ypred
 
 
-def train_geogat(args, fold_n, load_path, iteration_num, device):
+def train_geogat(args, fold_n, load_path, iteration_num, device, dataset):
     # TRAINING DATASET BASIC PARAMETERS
     # [num_feature, num_gene, num_drug]
-    num_feature = 8
-    dict_drug_num = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+    num_feature = 4
+    dict_drug_num = pd.read_csv('./' + dataset + '/filtered_data/drug_num_dict.csv')
     num_drug = dict_drug_num.shape[0]
-    final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+    final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     num_gene = final_annotation_gene_df.shape[0]
-    dir_opt = '/data'
-    form_data_path = '.' + dir_opt + '/form_data'
+    form_data_path = './' + dataset + '/form_data'
     # READ THESE FEATURE LABEL FILES
     print('--- LOADING TRAINING FILES ... ---')
-    xTr = np.load('./data/form_data/xTr' + str(fold_n) + '.npy')
-    yTr = np.load('./data/form_data/yTr' + str(fold_n) + '.npy')
-    drugTr =  np.load('./data/form_data/drugTr' + str(fold_n) + '.npy')
+    xTr = np.load('./' + dataset + '/form_data/xTr' + str(fold_n) + '.npy')
+    yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
+    drugTr =  np.load('./' + dataset + '/form_data/drugTr' + str(fold_n) + '.npy')
     edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy') ).long() 
 
     # BUILD [WeightBiGNN, DECODER] MODEL
-    model = build_geogat_model(args, device)
+    model = build_geogat_model(args, device, dataset)
     if args.model == 'load':
         model.load_state_dict(torch.load(load_path, map_location=device))
 
@@ -174,22 +174,22 @@ def train_geogat(args, fold_n, load_path, iteration_num, device):
         iteration_num = 0
     max_test_corr = 0
     max_test_corr_id = 0
-    e1 = 20
+    e1 = 10
     e2 = 10
     e3 = 10
-    e4 = 20
+    e4 = 30
     epoch_loss_list = []
     epoch_pearson_list = []
     test_loss_list = []
     test_pearson_list = []
     # CLEAN RESULT PREVIOUS EPOCH_I_PRED FILES
     folder_name = 'epoch_' + str(epoch_num)
-    path = '.' + dir_opt + '/result/%s' % (folder_name)
+    path = './' + dataset + '/result/%s' % (folder_name)
     unit = 1
-    while os.path.exists('.' + dir_opt + '/result') == False:
-        os.mkdir('.' + dir_opt + '/result')
+    while os.path.exists('./' + dataset + '/result') == False:
+        os.mkdir('./' + dataset + '/result')
     while os.path.exists(path):
-        path = '.' + dir_opt + '/result/%s_%d' % (folder_name, unit)
+        path = './' + dataset + '/result/%s_%d' % (folder_name, unit)
         unit += 1
     os.mkdir(path)
     # import pdb; pdb.set_trace()
@@ -253,7 +253,7 @@ def train_geogat(args, fold_n, load_path, iteration_num, device):
         # # # TEST MODEL ON TEST DATASET
         # fold_n = 1
         test_save_path = path
-        test_pearson, test_loss, tmp_test_input_df = test_geogat(prog_args, fold_n, model, test_save_path, device)
+        test_pearson, test_loss, tmp_test_input_df = test_geogat(prog_args, fold_n, model, test_save_path, device, dataset)
         test_pearson_score = test_pearson['Pred Score'][0]
         test_pearson_list.append(test_pearson_score)
         test_loss_list.append(test_loss)
@@ -292,18 +292,17 @@ def test_geogat_model(dataset_loader, model, device, args):
     return model, batch_loss, ypred
 
 
-def test_geogat(args, fold_n, model, test_save_path, device):
+def test_geogat(args, fold_n, model, test_save_path, device, dataset):
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     # TEST MODEL ON TEST DATASET
-    dir_opt = '/data'
-    form_data_path = '.' + dir_opt + '/form_data'
+    form_data_path = './' + dataset + '/form_data'
     xTe = np.load(form_data_path + '/xTe' + str(fold_n) + '.npy')
     yTe = np.load(form_data_path + '/yTe' + str(fold_n) + '.npy')
-    drugTe =  np.load('./data/form_data/drugTe' + str(fold_n) + '.npy')
+    drugTe =  np.load('./' + dataset + '/form_data/drugTe' + str(fold_n) + '.npy')
     edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy') ).long() 
 
     dl_input_num = xTe.shape[0]
@@ -311,10 +310,10 @@ def test_geogat(args, fold_n, model, test_save_path, device):
     # CLEAN RESULT PREVIOUS EPOCH_I_PRED FILES
     path = test_save_path
     # [num_feature, num_gene, num_drug]
-    num_feature = 8
-    dict_drug_num = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+    num_feature = 4
+    dict_drug_num = pd.read_csv('./' + dataset + '/filtered_data/drug_num_dict.csv')
     num_drug = dict_drug_num.shape[0]
-    final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+    final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     num_gene = final_annotation_gene_df.shape[0]
     # RUN TEST MODEL
     model.eval()
@@ -354,6 +353,7 @@ def test_geogat(args, fold_n, model, test_save_path, device):
 
 
 
+
 if __name__ == "__main__":
     # PARSE ARGUMENT FROM TERMINAL OR DEFAULT PARAMETERS
     prog_args = arg_parse()
@@ -371,21 +371,12 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
-    # prog_args.model = 'load'
-    # load_path = './data/result/epoch_100/best_train_model.pt'
+    # dataset = 'data-nci'
+    dataset = 'data-oneil'
     load_path = ''
-    yTr = np.load('./data/form_data/yTr' + str(fold_n) + '.npy')
-    # yTr = np.load('./data/form_data/y_split1.npy')
+    yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
+    # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
     epoch_iteration = int(dl_input_num / prog_args.batch_size)
     start_iter_num = 100 * epoch_iteration
-    train_geogat(prog_args, fold_n, load_path, start_iter_num, device)
-
-    # # # TEST THE MODEL
-    # # TEST [FOLD-1]
-    # fold_n = 1
-    # model = build_geogat_model(prog_args, device)
-    # test_load_path = './data/result/epoch_100/best_train_model.pt'
-    # model.load_state_dict(torch.load(test_load_path, map_location=device))
-    # test_save_path = './data/result/epoch_100'
-    # test_geogat(prog_args, fold_n, model, test_save_path, device)
+    train_geogat(prog_args, fold_n, load_path, start_iter_num, device, dataset)

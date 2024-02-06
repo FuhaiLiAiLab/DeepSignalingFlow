@@ -120,7 +120,7 @@ class WeBGNNDecoder(nn.Module):
                 node_num=node_num, num_edge=num_edge, num_gene_edge=num_gene_edge, device=self.device)
         return conv_first, conv_block, conv_last
 
-    def forward(self, x, edge_index, drug_index, label):
+    def forward(self, x, edge_index, drug_index):
         x_norm = self.x_norm(x)
         # import pdb; pdb.set_trace()
         x = self.conv_first(x_norm, edge_index)

@@ -6,6 +6,7 @@ import tensorboardX
 import numpy as np
 import pandas as pd
 import torch.nn as nn
+from scipy import sparse
 from torch.autograd import Variable
 
 import utils
@@ -15,7 +16,7 @@ from enc_dec.geo_webgnn_decoder import WeBGNNDecoder
 
 # PARSE ARGUMENTS FROM COMMAND LINE
 def arg_parse():
-    parser = argparse.ArgumentParser(description='GEO-WEBGNN ARGUMENTS.')
+    parser = argparse.ArgumentParser(description='COEMBED ARGUMENTS.')
     # ADD FOLLOWING ARGUMENTS
     parser.add_argument('--cuda', dest = 'cuda',
                 help = 'CUDA.')
@@ -25,33 +26,24 @@ def arg_parse():
                 help = 'GPU IDs')
     parser.add_argument('--add-self', dest = 'adj_self',
                 help = 'Graph convolution add nodes themselves.')
-    parser.add_argument('--adj', dest = 'adj',
-                help = 'Adjacent matrix is symmetry.')
     parser.add_argument('--model', dest = 'model',
                 help = 'Model load.')
-    parser.add_argument('--kfold', dest = 'kfold', type = float,
-                help = 'Number of K-fold splits.')
     parser.add_argument('--lr', dest = 'lr', type = float,
                 help = 'Learning rate.')
     parser.add_argument('--batch-size', dest = 'batch_size', type = int,
                 help = 'Batch size.')
-    parser.add_argument('--epochs', dest = 'num_epochs', type = int,
-                help = 'Number of epochs to train.')
     parser.add_argument('--num_workers', dest = 'num_workers', type = int,
                 help = 'Number of workers to load data.')
+    parser.add_argument('--epochs', dest = 'num_epochs', type = int,
+                help = 'Number of epochs to train.')
     parser.add_argument('--input-dim', dest = 'input_dim', type = int,
                 help = 'Input feature dimension')
     parser.add_argument('--hidden-dim', dest = 'hidden_dim', type = int,
                 help = 'Hidden dimension')
     parser.add_argument('--output-dim', dest = 'output_dim', type = int,
                 help = 'Output dimension')
-    parser.add_argument('--num-classes', dest = 'num_classes', type = int,
-                help = 'Number of label classes')
     parser.add_argument('--num-gc-layers', dest = 'num_gc_layers', type = int,
                 help = 'Number of graph convolution layers before each pooling')
-    parser.add_argument('--nobn', dest = 'bn', action = 'store_const',
-                const = False, default = True,
-                help = 'Whether batch normalization is used')
     parser.add_argument('--dropout', dest = 'dropout', type = float,
                 help = 'Dropout rate.')
 
@@ -65,7 +57,7 @@ def arg_parse():
                         lr = 0.001,
                         clip= 2.0,
                         batch_size = 64,
-                        num_epochs = 500,
+                        num_epochs = 100,
                         num_workers = 0,
                         input_dim = 4,
                         hidden_dim = 4,
@@ -98,45 +90,52 @@ def learning_rate_schedule(args, dl_input_num, iteration_num, e1, e2, e3, e4):
     return learning_rate
 
 
-def build_geowebgnn_model(args, device):
-    print('--- BUILDING UP WeBGNN MODEL ... ---')
+def build_geowebgnn_model(args, device, dataset):
+    print('--- BUILDING UP WEBGNN MODEL ... ---')
     # GET PARAMETERS
     # [num_gene, num_drug, (adj)node_num]
-    final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+    final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     gene_name_list = list(final_annotation_gene_df['kegg_gene'])
     num_gene = len(gene_name_list)
-    drug_num_dict_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+    drug_num_dict_df = pd.read_csv('./' + dataset + '/filtered_data/drug_num_dict.csv')
     drug_dict = dict(zip(drug_num_dict_df.Drug, drug_num_dict_df.drug_num))
     num_drug = len(drug_dict)
     node_num = num_gene + num_drug
     # [num_gene_edge, num_drug_edge]
-    gene_num_df = pd.read_csv('./data/filtered_data/kegg_gene_num_interaction.csv')
-    drugbank_num_df = pd.read_csv('./data/filtered_data/final_drugbank_num.csv')
+    gene_num_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_num_interaction.csv')
+    gene_num_df = gene_num_df.drop_duplicates()
+    drugbank_num_df = pd.read_csv('./' + dataset + '/filtered_data/final_drugbank_num_sym.csv')
     num_gene_edge = gene_num_df.shape[0]
     num_drug_edge = drugbank_num_df.shape[0]
-    num_edge = num_gene_edge + (num_drug_edge * 2) 
+    num_edge = num_gene_edge + num_drug_edge
+    # import pdb; pdb.set_trace()
     # BUILD UP MODEL
-    model = WeBGNNDecoder(input_dim=args.input_dim, hidden_dim=args.hidden_dim, embedding_dim=args.output_dim, decoder_dim=args.decoder_dim,
-            node_num=node_num, num_edge=num_edge, num_gene_edge=num_gene_edge, device=device)
+    model = WeBGNNDecoder(input_dim=args.input_dim, hidden_dim=args.hidden_dim, embedding_dim=args.output_dim, 
+                decoder_dim=args.decoder_dim, node_num=node_num, num_edge=num_edge, num_gene_edge=num_gene_edge, device=device)
     model = model.to(device)
     return model
 
 
+def sparse_mx_to_torch_sparse_tensor(sparse_mx):
+    """Convert a scipy sparse matrix to a torch sparse tensor."""
+    sparse_mx = sparse_mx.tocoo().astype(np.float32)
+    indices = torch.from_numpy(
+        np.vstack((sparse_mx.row, sparse_mx.col)).astype(np.int64))
+    values = torch.from_numpy(sparse_mx.data)
+    shape = torch.Size(sparse_mx.shape)
+    return torch.sparse.FloatTensor(indices, values, shape)
+
+
 def train_geowebgnn_model(dataset_loader, model, device, args, learning_rate):
-    # optimizer = torch.optim.Adam(filter(lambda p : p.requires_grad, model.parameters()), lr=learning_rate)
-    optimizer = torch.optim.Adam(filter(lambda p : p.requires_grad, model.parameters()), lr=learning_rate, eps=1e-7,weight_decay=5e-4)
-    # import pdb; pdb.set_trace()
-    # optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate, momentum = 0.9)
+    optimizer = torch.optim.Adam(filter(lambda p : p.requires_grad, model.parameters()), lr=learning_rate, eps=1e-7, weight_decay=1e-6)
     batch_loss = 0
     for batch_idx, data in enumerate(dataset_loader):
         optimizer.zero_grad()
-        x = Variable(data.x, requires_grad=False).to(device)
+        x = Variable(data.x.float(), requires_grad=False).to(device)
         edge_index = Variable(data.edge_index, requires_grad=False).to(device)
         drug_index = Variable(data.drug_index, requires_grad=False).to(device)
         label = Variable(data.label, requires_grad=False).to(device)
-        # THIS WILL USE METHOD [def forward()] TO MAKE PREDICTION
-        # import pdb; pdb.set_trace()
-        ypred = model(x=x, edge_index=edge_index, drug_index=drug_index, label=label)
+        ypred = model(x, edge_index, drug_index)
         loss = model.loss(ypred, label)
         loss.backward()
         batch_loss += loss.item()
@@ -146,26 +145,24 @@ def train_geowebgnn_model(dataset_loader, model, device, args, learning_rate):
     return model, batch_loss, ypred
 
 
-def train_geowebgnn(args, fold_n, load_path, iteration_num, device):
+def train_geowebgnn(args, fold_n, load_path, iteration_num, device, dataset):
     # TRAINING DATASET BASIC PARAMETERS
     # [num_feature, num_gene, num_drug]
     num_feature = 4
-    dict_drug_num = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+    dict_drug_num = pd.read_csv('./' + dataset + '/filtered_data/drug_num_dict.csv')
     num_drug = dict_drug_num.shape[0]
-    final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+    final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     num_gene = final_annotation_gene_df.shape[0]
-    dir_opt = '/data'
-    form_data_path = '.' + dir_opt + '/form_data'
+    form_data_path = './' + dataset + '/form_data'
     # READ THESE FEATURE LABEL FILES
     print('--- LOADING TRAINING FILES ... ---')
-    xTr = np.load('./data/form_data/xTr' + str(fold_n) + '.npy')
-    yTr = np.load('./data/form_data/yTr' + str(fold_n) + '.npy')
-    drugTr =  np.load('./data/form_data/drugTr' + str(fold_n) + '.npy')
-    # READ ADJ FILES
+    xTr = np.load('./' + dataset + '/form_data/xTr' + str(fold_n) + '.npy')
+    yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
+    drugTr =  np.load('./' + dataset + '/form_data/drugTr' + str(fold_n) + '.npy')
     edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy') ).long() 
 
     # BUILD [WeightBiGNN, DECODER] MODEL
-    model = build_geowebgnn_model(args, device)
+    model = build_geowebgnn_model(args, device, dataset)
     if args.model == 'load':
         model.load_state_dict(torch.load(load_path, map_location=device))
 
@@ -180,22 +177,22 @@ def train_geowebgnn(args, fold_n, load_path, iteration_num, device):
         iteration_num = 0
     max_test_corr = 0
     max_test_corr_id = 0
-    e1 = 30
-    e2 = 30
-    e3 = 20
-    e4 = 50
+    e1 = 10
+    e2 = 10
+    e3 = 10
+    e4 = 30
     epoch_loss_list = []
     epoch_pearson_list = []
     test_loss_list = []
     test_pearson_list = []
     # CLEAN RESULT PREVIOUS EPOCH_I_PRED FILES
     folder_name = 'epoch_' + str(epoch_num)
-    path = '.' + dir_opt + '/result/%s' % (folder_name)
+    path = './' + dataset + '/result/%s' % (folder_name)
     unit = 1
-    while os.path.exists('.' + dir_opt + '/result') == False:
-        os.mkdir('.' + dir_opt + '/result')
+    while os.path.exists('./' + dataset + '/result') == False:
+        os.mkdir('./' + dataset + '/result')
     while os.path.exists(path):
-        path = '.' + dir_opt + '/result/%s_%d' % (folder_name, unit)
+        path = './' + dataset + '/result/%s_%d' % (folder_name, unit)
         unit += 1
     os.mkdir(path)
     # import pdb; pdb.set_trace()
@@ -255,12 +252,11 @@ def train_geowebgnn(args, fold_n, load_path, iteration_num, device):
         epoch_loss_array = np.array(epoch_loss_list)
         np.save(path + '/pearson.npy', epoch_pearson_array)
         np.save(path + '/loss.npy', epoch_loss_array)
-        # # #
-        # # # 
+
         # # # TEST MODEL ON TEST DATASET
         # fold_n = 1
         test_save_path = path
-        test_pearson, test_loss, tmp_test_input_df = test_geowebgnn(prog_args, fold_n, model, test_save_path, device)
+        test_pearson, test_loss, tmp_test_input_df = test_geowebgnn(prog_args, fold_n, model, test_save_path, device, dataset)
         test_pearson_score = test_pearson['Pred Score'][0]
         test_pearson_list.append(test_pearson_score)
         test_loss_list.append(test_loss)
@@ -282,6 +278,7 @@ def train_geowebgnn(args, fold_n, load_path, iteration_num, device):
         print('--- TEST ---')
         print('BEST MODEL TEST LOSS: ', test_loss_list[max_test_corr_id - 1])
         print('BEST MODEL TEST PEARSON CORR: ', test_pearson_list[max_test_corr_id - 1])
+        torch.save(model.state_dict(), path + '/best_train_model.pt')
 
 
 def test_geowebgnn_model(dataset_loader, model, device, args):
@@ -292,37 +289,34 @@ def test_geowebgnn_model(dataset_loader, model, device, args):
         drug_index = Variable(data.drug_index, requires_grad=False).to(device)
         label = Variable(data.label, requires_grad=True).to(device)
         # THIS WILL USE METHOD [def forward()] TO MAKE PREDICTION
-        # import pdb; pdb.set_trace()
-        ypred = model(x=x, edge_index=edge_index, drug_index=drug_index, label=label)
+        ypred = model(x, edge_index, drug_index)
         loss = model.loss(ypred, label)
         batch_loss += loss.item()
     return model, batch_loss, ypred
 
 
-def test_geowebgnn(args, fold_n, model, test_save_path, device):
+def test_geowebgnn(args, fold_n, model, test_save_path, device, dataset):
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     print('-------------------------- TEST START --------------------------')
     # TEST MODEL ON TEST DATASET
-    dir_opt = '/data'
-    form_data_path = '.' + dir_opt + '/form_data'
+    form_data_path = './' + dataset + '/form_data'
     xTe = np.load(form_data_path + '/xTe' + str(fold_n) + '.npy')
     yTe = np.load(form_data_path + '/yTe' + str(fold_n) + '.npy')
-    drugTe =  np.load('./data/form_data/drugTe' + str(fold_n) + '.npy')
-    # READ ADJ FILES
-    edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy') ).long()
-    
+    drugTe =  np.load('./' + dataset + '/form_data/drugTe' + str(fold_n) + '.npy')
+    edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy') ).long() 
+
     dl_input_num = xTe.shape[0]
     batch_size = args.batch_size
     # CLEAN RESULT PREVIOUS EPOCH_I_PRED FILES
     path = test_save_path
     # [num_feature, num_gene, num_drug]
     num_feature = 4
-    dict_drug_num = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+    dict_drug_num = pd.read_csv('./' + dataset + '/filtered_data/drug_num_dict.csv')
     num_drug = dict_drug_num.shape[0]
-    final_annotation_gene_df = pd.read_csv('./data/filtered_data/kegg_gene_annotation.csv')
+    final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     num_gene = final_annotation_gene_df.shape[0]
     # RUN TEST MODEL
     model.eval()
@@ -357,6 +351,7 @@ def test_geowebgnn(args, fold_n, model, test_save_path, device):
     tmp_test_input_df = pd.DataFrame(test_dict)
     test_pearson = tmp_test_input_df.corr(method = 'pearson')
     print('PEARSON CORRELATION: ', test_pearson)
+    print('FOLD - ', fold_n)
     return test_pearson, test_loss, tmp_test_input_df
 
 
@@ -379,21 +374,12 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
-    # prog_args.model = 'load'
-    # load_path = './data/result/epoch_500/best_train_model.pt'
+    # dataset = 'data-nci'
+    dataset = 'data-oneil'
     load_path = ''
-    yTr = np.load('./data/form_data/yTr' + str(fold_n) + '.npy')
-    # yTr = np.load('./data/form_data/y_split1.npy')
+    yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
+    # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
     epoch_iteration = int(dl_input_num / prog_args.batch_size)
-    start_iter_num = 500 * epoch_iteration
-    train_geowebgnn(prog_args, fold_n, load_path, start_iter_num, device)
-
-    # # # TEST THE MODEL
-    # # TEST [FOLD-1]
-    # fold_n = 1
-    # model = build_geowebgnn_model(prog_args, device)
-    # test_load_path = './data/result/epoch_50/best_train_model.pt'
-    # model.load_state_dict(torch.load(test_load_path, map_location=device))
-    # test_save_path = './data/result/epoch_50'
-    # test_geowebgnn(prog_args, fold_n, model, test_save_path, device)
+    start_iter_num = 100 * epoch_iteration
+    train_geowebgnn(prog_args, fold_n, load_path, start_iter_num, device, dataset)
