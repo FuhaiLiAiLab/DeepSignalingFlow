@@ -1,7 +1,7 @@
 # DeepSignalingFlow
 
 ## 1. Model Overall Architecture
-![](./figures/Figure2.png)
+![](./figures/Figure1.png)
 
 ## 2. Run the DeepSignalingFlow
 ### 2.1 Parse the Datasets
@@ -23,9 +23,16 @@ python geo_tmain_webgnn.py
 ```
 
 ## 3. Model Results
-![](./figures/Figure3.png)
+![](./figures/Figure2.png)
 
 ## 4. Cell-line Specific Biomarkers
+![](./figures/Figure3.png)
+
 ![](./figures/Figure4.png)
 
+## 5. Result Validation
+* Comparisons for Summations of Weights on Shortest Paths Smaller than 4 Between 2 Genes Targeted by Drug Combinations Ranking Top 10 and Bottom 10 in the NCI ALMANAC dataset.
 ![](./figures/Figure5.png)
+
+* Comparisons for Summations of Weights on Shortest Paths Smaller than 5 Between 2 Genes Targeted by Drug Combinations Ranking Top 10 and Bottom 10 in the NCI ALMANAC dataset.
+![](./figures/Figure6.png)
