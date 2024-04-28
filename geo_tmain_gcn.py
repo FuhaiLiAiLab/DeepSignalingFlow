@@ -369,9 +369,11 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 5
+    fold_n = 1
+    dataset = 'data-drugcomb-fi'
+    # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    dataset = 'data-oneil'
+    # dataset = 'data-oneil'
     load_path = ''
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')

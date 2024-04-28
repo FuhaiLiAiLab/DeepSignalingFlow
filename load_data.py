@@ -42,7 +42,10 @@ class LoadData():
             drug_a = row[1]
             drug_b = row[2]
             cellline_name = row[3]
-            y = row[4]
+            if dataset == 'data-drugcomb-fi':
+                y = row[5]
+            else:
+                y = row[4]
             # DRUG_A AND [4853] TARGET GENES
             one_drug_target_list = []
             duo_drug_target_list = []
@@ -283,8 +286,11 @@ def split_k_fold(k, dataset):
 if __name__ == '__main__':
     # ############## MOUDLE 1 ################
     k = 5
+    # DATASET SELECTION
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    dataset = 'data-oneil'
+    # dataset = 'data-oneil'
 
     # input_random(dataset)
     # split_k_fold(k, dataset)

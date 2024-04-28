@@ -4,28 +4,50 @@ __pycache__/
 *.log
 .vscode/
 
-# data-nci/
+###### data-nci/ ######
 /data-nci/raw_data
 /data-nci/form_data
-
 # Middle Data Processes
 /data-nci/init_data
 /data-nci/init_manual_data
 /data-nci/map_cell_line
 /data-nci/map_manual_cell_line
-
 # Result
 # /data-nci/result
 
-# data-oneil/
+###### data-oneil/ ######
 /data-oneil/raw_data
 /data-oneil/form_data
-
 # Middle Data Processes
 /data-oneil/init_data
 /data-oneil/init_manual_data
 /data-oneil/map_cell_line
 /data-oneil/map_manual_cell_line
-
 # Result
 # /data-oneil/result
+
+###### data-drugcomb-fi/ ######
+/data-drugcomb-fi/raw_data
+/data-drugcomb-fi/form_data
+# Middle Data Processes
+/data-drugcomb-fi/init_data/*gdsc*
+/data-drugcomb-fi/init_data/*dl_input*
+/data-drugcomb-fi/init_manual_data
+/data-drugcomb-fi/map_cell_line
+/data-drugcomb-fi/map_manual_cell_line
+# Result
+# /data-drugcomb-fi/result
+
+###### data-DrugCombDB/ ######
+/data-DrugCombDB/raw_data
+/data-DrugCombDB/form_data
+# Middle Data Processes
+/data-DrugCombDB/init_data/*gdsc*
+/data-DrugCombDB/init_data/*dl_input*
+/data-DrugCombDB/init_manual_data
+/data-DrugCombDB/map_cell_line
+/data-DrugCombDB/map_manual_cell_line
+# Result
+# /data-DrugCombDB/result
+
+
