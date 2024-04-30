@@ -288,6 +288,7 @@ def test_geogcn_model(dataset_loader, model, device, args):
         ypred = model(x, edge_index, drug_index)
         loss = model.loss(ypred, label)
         batch_loss += loss.item()
+    torch.cuda.empty_cache()
     return model, batch_loss, ypred
 
 
@@ -369,7 +370,7 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 1
+    fold_n = 5
     dataset = 'data-drugcomb-fi'
     # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'

@@ -301,6 +301,7 @@ def test_geogformer_model(dataset_loader, model, device, args):
         ypred = model(x, edge_index, drug_index)
         loss = model.loss(ypred, label)
         batch_loss += loss.item()
+    torch.cuda.empty_cache()
     return model, batch_loss, ypred
 
 
