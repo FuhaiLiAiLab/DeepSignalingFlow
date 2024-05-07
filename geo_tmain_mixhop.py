@@ -65,7 +65,7 @@ def arg_parse():
                         lr = 0.001,
                         clip= 2.0,
                         batch_size = 64,
-                        num_epochs = 100,
+                        num_epochs = 50,
                         num_workers = 0,
                         input_dim = 4,
                         hidden_dim = 4,
@@ -186,10 +186,10 @@ def train_geomixhop(args, fold_n, load_path, iteration_num, device, dataset):
         iteration_num = 0
     max_test_corr = 0
     max_test_corr_id = 0
-    e1 = 10
-    e2 = 10
-    e3 = 10
-    e4 = 30
+    e1 = 1
+    e2 = 1
+    e3 = 1
+    e4 = 3
     epoch_loss_list = []
     epoch_pearson_list = []
     test_loss_list = []
@@ -384,8 +384,10 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    dataset = 'data-oneil'
+    # dataset = 'data-oneil'
     load_path = ''
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')

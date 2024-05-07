@@ -65,8 +65,8 @@ def arg_parse():
                         lr = 0.001,
                         clip= 2.0,
                         batch_size = 64,
-                        num_epochs = 100,
-                        num_workers = 0,
+                        num_epochs = 50,
+                        num_workers = 1,
                         input_dim = 4,
                         hidden_dim = 32,
                         output_dim = 64,
@@ -383,11 +383,13 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 5
+    fold_n = 3
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    dataset = 'data-oneil'
+    # dataset = 'data-oneil'
     load_path = ''
-    yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
+    yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy') 
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
     epoch_iteration = int(dl_input_num / prog_args.batch_size)

@@ -43,22 +43,9 @@ class GATConv(MessagePassing):
         edge_index,_ = add_self_loops(edge_index, num_nodes = x.size(0))
         x = self.weight_linear(x).view(-1, self.num_head, self.k) # N * num_head * k
 
-        if edge_attr is not None:
-            #add features corresponding to self-loop edges, set as zeros.
-            self_loop_attr = torch.zeros(x.size(0),dtype=torch.long)
-            self_loop_attr = self_loop_attr.to(edge_attr.device).to(edge_attr.dtype)
-            edge_attr = torch.cat((edge_attr, self_loop_attr), dim = 0)
+        return self.propagate(edge_index, x=x)
 
-            edge_embeddings = self.edge_embedding(edge_attr)
-            return self.propagate(edge_index, x=x, edge_attr=edge_embeddings)
-        else:
-            return self.propagate(edge_index, x=x, edge_attr=None)
-
-    def message(self, edge_index, x_i, x_j, edge_attr):
-        if edge_attr is not None:
-            edge_attr = edge_attr.view(-1, self.num_head, self.k)
-            x_j += edge_attr
-            
+    def message(self, edge_index, x_i, x_j):
         alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1) # E * num_head
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, edge_index[0])
