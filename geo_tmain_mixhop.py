@@ -384,12 +384,18 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
+    dataset = 'data-drugcomb-fi'
+    # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    dataset = 'data-oneil'
+    # dataset = 'data-oneil'
+    # NOT LOAD MODEL
     load_path = ''
+    # LOAD MODEL
+    # prog_args.model = 'load'
+    # load_path = './' + dataset + '/result/epoch_100_4/best_train_model.pt'
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
     epoch_iteration = int(dl_input_num / prog_args.batch_size)
-    start_iter_num = 100 * epoch_iteration
+    start_iter_num = 10 * epoch_iteration
     train_geomixhop(prog_args, fold_n, load_path, start_iter_num, device, dataset)

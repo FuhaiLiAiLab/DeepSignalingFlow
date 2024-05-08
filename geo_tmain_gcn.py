@@ -56,7 +56,7 @@ def arg_parse():
                         clip = 2.0,
                         batch_size = 64,
                         num_workers = 1,
-                        num_epochs = 100,
+                        num_epochs = 50,
                         input_dim = 4,
                         hidden_dim = 8,
                         output_dim = 8,
@@ -375,10 +375,14 @@ if __name__ == "__main__":
     # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
     # dataset = 'data-oneil'
-    load_path = ''
+     # NOT LOAD MODEL
+    # load_path = ''
+    # LOAD MODEL
+    prog_args.model = 'load'
+    load_path = './' + dataset + '/result/epoch_50/best_train_model.pt'
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
     epoch_iteration = int(dl_input_num / prog_args.batch_size)
-    start_iter_num = 100 * epoch_iteration
+    start_iter_num = 7 * epoch_iteration
     train_geogcn(prog_args, fold_n, load_path, start_iter_num, device, dataset)
