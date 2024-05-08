@@ -56,7 +56,7 @@ def arg_parse():
                         clip = 2.0,
                         batch_size = 64,
                         num_workers = 1,
-                        num_epochs = 100,
+                        num_epochs = 50,
                         input_dim = 4,
                         hidden_dim = 8,
                         output_dim = 8,
@@ -372,15 +372,11 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
-    dataset = 'data-drugcomb-fi'
-    # dataset = 'data-DrugCombDB'
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
     # dataset = 'data-oneil'
-    # NOT LOAD MODEL
-    # load_path = ''
-    # LOAD MODEL
-    prog_args.model = 'load'
-    load_path = './' + dataset + '/result/epoch_100_4/best_train_model.pt'
+    load_path = ''
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]

@@ -383,11 +383,10 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
-    dataset = 'data-drugcomb-fi'
-    # dataset = 'data-DrugCombDB'
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
     # dataset = 'data-oneil'
-    # NOT LOAD MODEL
     load_path = ''
     # LOAD MODEL
     # prog_args.model = 'load'

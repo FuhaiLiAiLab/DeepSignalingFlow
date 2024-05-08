@@ -57,7 +57,7 @@ def arg_parse():
                         lr = 0.001,
                         clip= 2.0,
                         batch_size = 64,
-                        num_epochs = 100,
+                        num_epochs = 50,
                         num_workers = 0,
                         input_dim = 4,
                         hidden_dim = 4,
@@ -375,8 +375,8 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 5
-    dataset = 'data-drugcomb-fi'
-    # dataset = 'data-DrugCombDB'
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
     # dataset = 'data-oneil'
     load_path = ''
