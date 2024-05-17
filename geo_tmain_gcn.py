@@ -370,7 +370,7 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 3
+    fold_n = 5
     # dataset = 'data-drugcomb-fi'
     dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'

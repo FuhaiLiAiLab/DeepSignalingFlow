@@ -66,11 +66,7 @@ def arg_parse():
                         clip= 2.0,
                         batch_size = 64,
                         num_epochs = 50,
-<<<<<<< HEAD
-                        num_workers = 0,
-=======
                         num_workers = 1,
->>>>>>> c2b2538be8ad87546b9043d32bea41523ab019b2
                         input_dim = 4,
                         hidden_dim = 32,
                         output_dim = 64,
@@ -387,7 +383,7 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 3
+    fold_n = 5
     # dataset = 'data-drugcomb-fi'
     dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
