@@ -42,12 +42,12 @@ class NetAnalyse():
         gene_bind_weight_edge_df = pd.read_csv('./analysis_nci/gene_bind_weight_edge.csv')
         gene_bind_degree_df = pd.read_csv('./analysis_nci/gene_weight_bind_degree.csv')
         # MAP GENES WITH INDEX NUM !!! START FROM 1
-        kegg_gene_num_dict_df = pd.read_csv('./data/filtered_data/kegg_gene_num_dict.csv')
+        kegg_gene_num_dict_df = pd.read_csv('./data-nci/filtered_data/kegg_gene_num_dict.csv')
         kegg_gene_num_dict = dict(zip(kegg_gene_num_dict_df.kegg_gene, kegg_gene_num_dict_df.gene_num))
         kegg_gene_name_dict = dict(zip(kegg_gene_num_dict_df.gene_num, kegg_gene_num_dict_df.kegg_gene))
         # GET GENES TARGETED BY DRUGS
-        final_drugbank_df = pd.read_csv('./data/filtered_data/final_drugbank.csv')
-        final_drugbank_num_df = pd.read_csv('./data/filtered_data/final_drugbank.csv')
+        final_drugbank_df = pd.read_csv('./data-nci/filtered_data/final_drugbank.csv')
+        final_drugbank_num_df = pd.read_csv('./data-nci/filtered_data/final_drugbank.csv')
         gene_targeted_name_list = list(set(final_drugbank_df['Target']))
         gene_targeted_num_list = list(set(final_drugbank_df['Target']))
         print('----- TARGETED GENES BY DRUGS -----')
@@ -84,11 +84,11 @@ class NetAnalyse():
 
 
     def drug_target_interaction(self, cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj):
-        filtered_drug_target_df = pd.read_csv('./data/filtered_data/final_drugbank.csv')
+        filtered_drug_target_df = pd.read_csv('./data-nci/filtered_data/final_drugbank.csv')
         print(filtered_drug_target_df)
 
         # FORM [dl_input_drug_dict] TO MAP GENES WITH INDEX START FROM 2017
-        drug_map_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+        drug_map_df = pd.read_csv('./data-nci/filtered_data/drug_num_dict.csv')
         drug_map_num_list = list(drug_map_df['drug_num'])
         drugbank_druglist = list(drug_map_df['Drug'])
         drugbank_drug_dict = {drugbank_druglist[i - 1] : drug_map_num_list[i - 1] for i in range(1, len(drugbank_druglist)+1)}
@@ -109,7 +109,7 @@ class NetAnalyse():
                 if row[1] == top_testloss_dl_drugA or row[1] == top_testloss_dl_drugB:
                     print(row)
                     cellline_specific_drugtar_list.append(row[0])
-            drugbank_num_df = pd.read_csv('./data/filtered_data/final_drugbank_num.csv')
+            drugbank_num_df = pd.read_csv('./data-nci/filtered_data/final_drugbank_num.csv')
             cellline_specific_drugbank_df = drugbank_num_df.loc[drugbank_num_df.index.isin(cellline_specific_drugtar_list)]
             print(cellline_specific_drugbank_df)
             return cellline_specific_drugbank_df
@@ -126,19 +126,19 @@ class NetAnalyse():
                 if row[1] == bottom_testloss_dl_drugA or row[1] == bottom_testloss_dl_drugB:
                     print(row)
                     cellline_specific_drugtar_list.append(row[0])
-            drugbank_num_df = pd.read_csv('./data/filtered_data/final_drugbank_num.csv')
+            drugbank_num_df = pd.read_csv('./data-nci/filtered_data/final_drugbank_num.csv')
             cellline_specific_drugbank_df = drugbank_num_df.loc[drugbank_num_df.index.isin(cellline_specific_drugtar_list)]
             print(cellline_specific_drugbank_df)
             return cellline_specific_drugbank_df
 
     def plot_net2(self, node_threshold, edge_threshold, 
                 intersection_list, intersection_degree_list, cellline_specific_drugbank_df,
-                topmin_loss, seed, cellline_name, top_n):
+                topmin_loss, seed, cellline_name, top_n, cutoff_range):
         # READ INFORMATION FROM FILE
         gene_bind_weight_edge_df = pd.read_csv('./analysis_nci/gene_bind_weight_edge.csv')
         gene_bind_degree_df = pd.read_csv('./analysis_nci/gene_weight_bind_degree.csv')
         # FORM THE MAP FOR GENES WITH INDEX NUM !!! START FROM 1
-        kegg_gene_num_dict_df = pd.read_csv('./data/filtered_data/kegg_gene_num_dict.csv')
+        kegg_gene_num_dict_df = pd.read_csv('./data-nci/filtered_data/kegg_gene_num_dict.csv')
         kegg_gene_num_dict = dict(zip(kegg_gene_num_dict_df.gene_num, kegg_gene_num_dict_df.kegg_gene))
 
         # BUILD bind NODES DEGREE [DELETION LIST]
@@ -181,7 +181,7 @@ class NetAnalyse():
             # weight
             bind_digraph.add_edge(drug_idx, gene_idx, weight = 0.5 * edge_weight_max)
         # Show [drugbank]'s Drug Names in Final Graph
-        drug_map_df = pd.read_csv('./data/filtered_data/drug_num_dict.csv')
+        drug_map_df = pd.read_csv('./data-nci/filtered_data/drug_num_dict.csv')
         drug_map_num_list = list(drug_map_df['drug_num'])
         drugbank_druglist = list(drug_map_df['Drug'])
         drugbank_num_drug_dict = {drug_map_num_list[i - 1] : drugbank_druglist[i - 1] for i in range(1, len(drugbank_druglist)+1)}
@@ -287,8 +287,7 @@ class NetAnalyse():
         print('----- SUM OF WEIGHTS FOR PATH 4: -----')
         print(path4_weight_count)
 
-        if topmin_loss == False:
-            # cutoff==5
+        if cutoff_range == True:
             cutoff = 5
             path5_num_count = 0
             bind_graph_target_between_5links = []
@@ -318,7 +317,8 @@ class NetAnalyse():
                                 iterations = 3500,
                                 seed = seed)
 
-        cmap = plt.cm.viridis
+        # cmap = plt.cm.Wistia
+        cmap = plt.cm.Wistia
         dmin = min(bind_node_degree_list)
         dmax = max(bind_node_degree_list)
         cmap2 = plt.cm.OrRd
@@ -330,7 +330,7 @@ class NetAnalyse():
                     pos = pos,
                     # arrowsize = 5,
                     alpha = 0.3,
-                    width = [float((weight+0.5)**3) / 1 for weight in weights],
+                    width = [float((weight+0.5)**3) / 0.5 for weight in weights],
                     # edge_color = rerange_weights,
                     edge_color = weights,
                     edge_cmap = cmap2
@@ -340,7 +340,8 @@ class NetAnalyse():
         hilight_nodes = nx.draw_networkx_nodes(bind_filtered_digraph.subgraph(intersection_list), 
                     pos = pos,
                     nodelist = intersection_list, 
-                    node_size = [float(degree**1.75) / 1.5 for degree in intersection_degree_list],
+                    # node_size = [float((degree+1)**1.5) / 0.1 for degree in intersection_degree_list],
+                    node_size = 70,
                     linewidths = 1.0,
                     node_color = 'white'
                     )
@@ -349,7 +350,8 @@ class NetAnalyse():
         hilight_genes = nx.draw_networkx_nodes(bind_filtered_digraph.subgraph(bind_graph_target_nodes), 
                     pos = pos,
                     nodelist = bind_graph_target_nodes, 
-                    node_size = [float(bind_node_degree_dict[gene_idx]**1.75) / 3 for gene_idx in bind_graph_target_nodes],
+                    # node_size = [float(bind_node_degree_dict[gene_idx]**1.75) / 3 for gene_idx in bind_graph_target_nodes],
+                    node_size = 70,
                     linewidths = 1.0,
                     node_color = 'white'
                     )
@@ -359,33 +361,24 @@ class NetAnalyse():
                     pos = pos,
                     node_color = bind_node_degree_list,
                     nodelist = nodes, 
-                    node_size = [float(degree**1.75) / 3 for degree in bind_node_degree_list],
+                    # node_size = [float(degree**1.75) / 3 for degree in bind_node_degree_list],
+                    node_size = 40,
                     alpha = 0.9,
                     cmap = cmap
                     )
 
         # HIGHLIGHT DRUUGS
-        # First remove nodes in original color
-        hilight_drugs = nx.draw_networkx_nodes(bind_filtered_digraph.subgraph(cellline_specific_druglist), 
-                    pos = pos,
-                    nodelist = cellline_specific_druglist, 
-                    node_size = [float(bind_node_degree_dict[drug_idx]**1.75) / 3 for drug_idx in cellline_specific_druglist],
-                    linewidths = 1.5,
-                    alpha = 1,
-                    node_color = 'white',
-                    )
         # Shape = "V" And Plot
         hilight_drugs = nx.draw_networkx_nodes(bind_filtered_digraph.subgraph(cellline_specific_druglist), 
                     pos = pos,
                     nodelist = cellline_specific_druglist, 
-                    node_size = [float(bind_node_degree_dict[drug_idx]**1.75) / 1.0 for drug_idx in cellline_specific_druglist],
-                    linewidths = 0.5,
+                    node_size = [float(bind_node_degree_dict[drug_idx]**1.5) / 0.05 for drug_idx in cellline_specific_druglist],
+                    linewidths = 1.5,
                     alpha = 1,
                     node_color = 'orange',
                     node_shape = 'v'
                     )
-        hilight_drugs.set_edgecolor('black')
-
+        hilight_drugs.set_edgecolor('gray')
 
         # HIGHLIGHT [drug-target-betweeness] EDGES (cutoff==4)
         nx.draw_networkx_edges(bind_filtered_digraph,
@@ -393,24 +386,16 @@ class NetAnalyse():
                     edgelist = bind_graph_target_between_4links,
                     connectionstyle = 'arc3, rad = 0.3',
                     edge_color = 'lightgreen',
-                    width = 0.9)
-        
-        # HIGHLIGHT [drug-target-betweeness] EDGES (cutoff==3)
-        nx.draw_networkx_edges(bind_filtered_digraph,
-                    pos = pos,
-                    edgelist = bind_graph_target_between_3links,
-                    connectionstyle = 'arc3, rad = 0.3',
-                    edge_color = 'red',
                     width = 1.5)
         
         # HIGHLIGHT [drug-target-betweeness] EDGES (cutoff==5)
-        if topmin_loss == False:
+        if cutoff_range == True:
             nx.draw_networkx_edges(bind_filtered_digraph,
                         pos = pos,
                         edgelist = bind_graph_target_between_5links,
                         connectionstyle = 'arc3, rad = 0.3',
                         edge_color = 'orange',
-                        width = 0.5)
+                        width = 0.75)
 
         # HIGHLIGHT [drug-target] EDGES
         nx.draw_networkx_edges(bind_filtered_digraph,
@@ -418,12 +403,12 @@ class NetAnalyse():
                     edgelist = bind_graph_drugtar_links,
                     connectionstyle = 'arc3, rad = 0.3',
                     edge_color = 'lightblue',
-                    width = 1.2)
+                    width = 2)
 
         nx.draw_networkx_labels(bind_filtered_digraph,
                     pos = pos,
                     labels = bind_filter_node_name_dict,
-                    font_size = 2.0
+                    font_size = 3.0
                     )
 
         # import pdb; pdb.set_trace()
@@ -445,10 +430,13 @@ class NetAnalyse():
         if cellline_name == 'A549/ATCC':
             cellline_name = 'A549'
         if topmin_loss == True:
-            filename = './analysis_nci/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '.png'
+            if cutoff_range == True:
+                filename = './analysis_nci/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '_range5.png'
+            else:
+                filename = './analysis_nci/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '_range4.png'
         else:
             filename = './analysis_nci/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
-        plt.savefig(filename, dpi = 600)
+        plt.savefig(filename, dpi = 1200)
         plt.close()
         return path4_weight_count
 
@@ -459,9 +447,9 @@ if __name__ == "__main__":
     # NetAnalyse().statistic_net()
     
     #####
-    node_threshold = 0.8
-    edge_threshold = 0.2
-    cellline_name = '786-0'
+    node_threshold = 1.0
+    edge_threshold = 0.1
+    # cellline_name = '786-0'
     # cellline_name = 'A498'
     # cellline_name = 'A549/ATCC'
     # cellline_name = 'ACHN'
@@ -510,7 +498,7 @@ if __name__ == "__main__":
     # cellline_name = 'SNB-75'
     # cellline_name = 'SR'
     # cellline_name = 'SW-620'
-    # cellline_name = 'T-47D'
+    cellline_name = 'T-47D'
     # cellline_name = 'TK-10'
     # cellline_name = 'U251'
     # cellline_name = 'UACC-257'
@@ -523,7 +511,12 @@ if __name__ == "__main__":
     # SET TRAINING/TEST SET
     top_k = 20
     seed = 187
-    topmin_loss = False
+
+    # topmin_loss = False
+    topmin_loss = True
+
+    cutoff_range = True
+    # cutoff_range = False
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
 
@@ -536,7 +529,7 @@ if __name__ == "__main__":
         cellline_specific_drugbank_df = NetAnalyse().drug_target_interaction(cellline_name, topmin_loss, testloss_topminobj, testloss_bottomminobj)
 
         path4_weight_count = NetAnalyse().plot_net2(node_threshold, edge_threshold,
-            intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n)
+            intersection_list, intersection_degree_list, cellline_specific_drugbank_df, topmin_loss, seed, cellline_name, top_n, cutoff_range)
         path4_weight_count_list.append(path4_weight_count)
 
     print('----- LIST FOR SUM OF WEIGHTS FOR PATH 4: -----')

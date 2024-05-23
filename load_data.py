@@ -285,12 +285,12 @@ def split_k_fold(k, dataset):
 
 if __name__ == '__main__':
     # ############## MOUDLE 1 ################
-    k = 5
+    k = 2
     # DATASET SELECTION
-    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-drugcomb-fi'
     # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    dataset = 'data-oneil'
+    # dataset = 'data-oneil'
 
     # input_random(dataset)
     # split_k_fold(k, dataset)
@@ -300,11 +300,11 @@ if __name__ == '__main__':
     batch_size = 64
     LoadData(dataset).load_all_split(batch_size, k)
 
-    for n_fold in range(1, k + 1):
-        # ############## MOUDLE 2 ################
-        print('split_input_' + str(n_fold) + '.csv')
-        LoadData(dataset).load_adj_edgeindex()
+    n_fold = 1
+    # ############## MOUDLE 2 ################
+    print('split_input_' + str(n_fold) + '.csv')
+    LoadData(dataset).load_adj_edgeindex()
 
-        ################ MOUDLE 3 ################
-        # FORM N-TH FOLD TRAINING DATASET
-        LoadData(dataset).load_train_test(k, n_fold)
+    ################ MOUDLE 3 ################
+    # FORM N-TH FOLD TRAINING DATASET
+    LoadData(dataset).load_train_test(k, n_fold)

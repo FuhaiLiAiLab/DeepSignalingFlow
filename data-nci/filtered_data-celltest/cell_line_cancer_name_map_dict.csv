@@ -1,0 +1,56 @@
+Cell_Line_Name,Cell_Line_Num,Cancer_name
+786-0,1,Renal
+A498,2,Renal
+A549/ATCC,3,Lung
+ACHN,4,Renal
+BT-549,5,Breast
+CAKI-1,6,Renal
+CCRF-CEM,7,Leukemia
+COLO 205,8,Colon
+DU-145,9,Prostate
+EKVX,10,Lung
+HCC-2998,11,Colon
+HCT-116,12,Colon
+HCT-15,13,Colon
+HOP-62,14,Lung
+HOP-92,15,Lung
+HS 578T,16,Breast
+HT29,17,Colon
+IGROV1,18,Ovarian
+K-562,19,Leukemia
+KM12,20,Colon
+LOX IMVI,21,Melanoma
+M14,22,Melanoma
+MCF7,23,Breast
+MDA-MB-231/ATCC,24,Breast
+MDA-MB-468,25,Breast
+MOLT-4,26,Leukemia
+NCI-H226,27,Lung
+NCI-H23,28,Lung
+NCI-H322M,29,Lung
+NCI-H460,30,Lung
+NCI-H522,31,Lung
+OVCAR-3,32,Ovarian
+OVCAR-4,33,Ovarian
+OVCAR-5,34,Ovarian
+OVCAR-8,35,Ovarian
+PC-3,36,Prostate
+RPMI-8226,37,Leukemia
+RXF 393,38,Renal
+SF-268,39,CNS
+SF-295,40,CNS
+SF-539,41,CNS
+SK-MEL-2,42,Melanoma
+SK-MEL-28,43,Melanoma
+SK-MEL-5,44,Melanoma
+SK-OV-3,45,Ovarian
+SN12C,46,Renal
+SNB-75,47,CNS
+SR,48,Leukemia
+SW-620,49,Colon
+T-47D,50,Breast
+TK-10,51,Renal
+U251,52,CNS
+UACC-257,53,Melanoma
+UACC-62,54,Melanoma
+UO-31,55,Renal

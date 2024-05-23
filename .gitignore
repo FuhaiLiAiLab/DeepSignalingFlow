@@ -7,6 +7,8 @@ __pycache__/
 ###### data-nci/ ######
 /data-nci/raw_data
 /data-nci/form_data
+/data-nci/form_data-drugtest
+/data-nci/form_data-celltest
 # Middle Data Processes
 /data-nci/init_data
 /data-nci/init_manual_data
@@ -18,6 +20,8 @@ __pycache__/
 ###### data-oneil/ ######
 /data-oneil/raw_data
 /data-oneil/form_data
+/data-oneil/form_data-drugtest
+/data-oneil/form_data-celltest
 # Middle Data Processes
 /data-oneil/init_data
 /data-oneil/init_manual_data
@@ -29,6 +33,8 @@ __pycache__/
 ###### data-drugcomb-fi/ ######
 /data-drugcomb-fi/raw_data
 /data-drugcomb-fi/form_data
+/data-drugcomb-fi/form_data-drugtest
+/data-drugcomb-fi/form_data-celltest
 # Middle Data Processes
 /data-drugcomb-fi/init_data/*gdsc*
 /data-drugcomb-fi/init_data/*dl_input*
@@ -41,6 +47,8 @@ __pycache__/
 ###### data-DrugCombDB/ ######
 /data-DrugCombDB/raw_data
 /data-DrugCombDB/form_data
+/data-DrugCombDB/form_data-drugtest
+/data-DrugCombDB/form_data-celltest
 # Middle Data Processes
 /data-DrugCombDB/init_data/*gdsc*
 /data-DrugCombDB/init_data/*dl_input*

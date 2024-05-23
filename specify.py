@@ -15,7 +15,7 @@ class Specify():
 
     def cancer_cellline_specific(self, top_k, cellline_name):
         # ALL TEST RESULTS
-        dl_input_df = pd.read_csv('./data/filtered_data/random_final_dl_input.csv')
+        dl_input_df = pd.read_csv('./data-nci/filtered_data/random_final_dl_input.csv')
         cancer_specific_input_indexlist = []
         for row in dl_input_df.itertuples():
             if row[3] == cellline_name:
@@ -25,9 +25,9 @@ class Specify():
         test_pred_df_list = []
         for place_num in range(1, k + 1):
             if place_num == 1:
-                result_path = './data/result/nci_webgnn/epoch_500'
+                result_path = './data-nci/result/webgnn/epoch_500'
             else:
-                result_path = './data/result/nci_webgnn/epoch_500_' + str(place_num - 1)
+                result_path = './data-nci/result/webgnn/epoch_500_' + str(place_num - 1)
             test_pred_path = result_path + '/BestTestPred.txt'
             test_pred_df = pd.read_table(test_pred_path, delimiter=',')
             test_pred_df_list.append(test_pred_df)
