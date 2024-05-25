@@ -287,8 +287,8 @@ if __name__ == '__main__':
     # ############## MOUDLE 1 ################
     k = 2
     # DATASET SELECTION
-    dataset = 'data-drugcomb-fi'
-    # dataset = 'data-DrugCombDB'
+    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
     # dataset = 'data-oneil'
 
@@ -300,7 +300,7 @@ if __name__ == '__main__':
     batch_size = 64
     LoadData(dataset).load_all_split(batch_size, k)
 
-    n_fold = 1
+    n_fold = 2
     # ############## MOUDLE 2 ################
     print('split_input_' + str(n_fold) + '.csv')
     LoadData(dataset).load_adj_edgeindex()

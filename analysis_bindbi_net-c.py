@@ -435,7 +435,10 @@ class NetAnalyse():
             else:
                 filename = './analysis_nci/plot_topmin_'  + cellline_name + '_top_' + str(top_n) + '_range4.png'
         else:
-            filename = './analysis_nci/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '.png'
+            if cutoff_range == True:
+                filename = './analysis_nci/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '_range5.png'
+            else:
+                filename = './analysis_nci/plot_bottommin_'  + cellline_name + '_bottom_' + str(top_n) + '_range4.png'
         plt.savefig(filename, dpi = 1200)
         plt.close()
         return path4_weight_count
@@ -512,11 +515,11 @@ if __name__ == "__main__":
     top_k = 20
     seed = 187
 
-    # topmin_loss = False
-    topmin_loss = True
+    topmin_loss = False
+    # topmin_loss = True
 
-    cutoff_range = True
-    # cutoff_range = False
+    # cutoff_range = True
+    cutoff_range = False
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
 
