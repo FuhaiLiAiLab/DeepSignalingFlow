@@ -288,9 +288,9 @@ if __name__ == '__main__':
     k = 2
     # DATASET SELECTION
     # dataset = 'data-drugcomb-fi'
-    dataset = 'data-DrugCombDB'
+    # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    # dataset = 'data-oneil'
+    dataset = 'data-oneil'
 
     # input_random(dataset)
     # split_k_fold(k, dataset)
