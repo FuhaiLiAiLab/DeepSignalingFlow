@@ -370,16 +370,16 @@ if __name__ == "__main__":
     
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
-    fold_n = 5
+    fold_n = 2
     # dataset = 'data-drugcomb-fi'
-    dataset = 'data-DrugCombDB'
+    # dataset = 'data-DrugCombDB'
     # dataset = 'data-nci'
-    # dataset = 'data-oneil'
+    dataset = 'data-oneil'
      # NOT LOAD MODEL
-    # load_path = ''
+    load_path = ''
     # LOAD MODEL
-    prog_args.model = 'load'
-    load_path = './' + dataset + '/result/epoch_50/best_train_model.pt'
+    # prog_args.model = 'load'
+    # load_path = './' + dataset + '/result/epoch_50/best_train_model.pt'
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     # yTr = np.load('./' + dataset + '/form_data/y_split1.npy')
     dl_input_num = yTr.shape[0]
