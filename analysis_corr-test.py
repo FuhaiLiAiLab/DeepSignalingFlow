@@ -472,7 +472,7 @@ if __name__ == "__main__":
     
     ### MODEL SELECTION
     if dataset == 'data-nci':
-        # gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
+        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
         # gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gat', epoch_num=100, rebuild=rebuild)
         # gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gformer', epoch_num=200, rebuild=rebuild)
         # mixhop_decoder_test_list, mixhop_decoder_loss_list  = model_result(dataset=dataset, test_name=test_name, modelname='mixhop', epoch_num=200, rebuild=rebuild)
@@ -480,7 +480,7 @@ if __name__ == "__main__":
         # bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='bgnn', epoch_num=100, rebuild=rebuild)
         webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='webgnn', epoch_num=200, rebuild=rebuild)
     elif dataset == 'data-oneil':
-        # gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
+        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
         # gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gat', epoch_num=100, rebuild=rebuild) 
         # gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gformer', epoch_num=100, rebuild=rebuild)
         # mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='mixhop', epoch_num=100, rebuild=rebuild)
@@ -488,7 +488,7 @@ if __name__ == "__main__":
         # bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='bgnn', epoch_num=100, rebuild=rebuild)
         webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='webgnn', epoch_num=200, rebuild=rebuild)
     elif dataset == 'data-drugcomb-fi':
-        # gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
+        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
         # gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gat', epoch_num=100, rebuild=rebuild) 
         # gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gformer', epoch_num=50, rebuild=rebuild)
         # mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='mixhop', epoch_num=100, rebuild=rebuild)
@@ -496,7 +496,7 @@ if __name__ == "__main__":
         # bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='bgnn', epoch_num=100, rebuild=rebuild)
         webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='webgnn', epoch_num=200, rebuild=rebuild)
     elif dataset == 'data-DrugCombDB':
-        # gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
+        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gcn', epoch_num=50, rebuild=rebuild)
         # gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gat', epoch_num=50, rebuild=rebuild) 
         # gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='gformer', epoch_num=50, rebuild=rebuild)
         # mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='mixhop', epoch_num=50, rebuild=rebuild)
@@ -504,7 +504,7 @@ if __name__ == "__main__":
         # bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='bgnn', epoch_num=100, rebuild=rebuild)
         webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, test_name=test_name, modelname='webgnn', epoch_num=200, rebuild=rebuild)
 
-    # print('gcn_decoder_test_list = ', gcn_decoder_test_list)
+    print('gcn_decoder_test_list = ', gcn_decoder_test_list)
     # print('gat_decoder_test_list = ', gat_decoder_test_list)
     # print('gformer_decoder_test_list = ', gformer_decoder_test_list)
     # print('mixhop_decoder_test_list =', mixhop_decoder_test_list)
@@ -512,7 +512,7 @@ if __name__ == "__main__":
     # print('bgnn_decoder_test_list = ', bgnn_decoder_test_list)
     print('webgnn_decoder_test_list = ', webgnn_decoder_test_list)
 
-    # print('gcn_decoder_loss_list = ', gcn_decoder_loss_list)
+    print('gcn_decoder_loss_list = ', gcn_decoder_loss_list)
     # print('gat_decoder_loss_list = ', gat_decoder_loss_list)
     # print('gformer_decoder_loss_list = ', gformer_decoder_loss_list)
     # print('mixhop_decoder_loss_list = ', mixhop_decoder_loss_list)
