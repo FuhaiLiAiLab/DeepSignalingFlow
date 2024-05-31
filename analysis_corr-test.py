@@ -118,12 +118,12 @@ class AnalyseCorr():
         except KeyError as error:
             # Handle the error if the column is not found
             print(f"Error: {error}. The column 'Unnamed: 0' was not found in the DataFrame.")
-        comb_testpred_df = pd.read_csv('./' + dataset + '/filtered_data/split_input_2.csv')
-        print(fold_n, epoch_name, dataset, modelname)
-        comb_testpred_df['Pred Score'] = list(test_pred_df['Pred Score'])
-        comb_testpred_df.to_csv('./' + dataset + '/result/' + test_name + '/' + modelname + '/' + epoch_name + '/combine_testpred.csv', index=False, header=True)
-        sns.set_style('whitegrid')
-        sns.jointplot(data=comb_testpred_df, x='Score', y='Pred Score', kind='reg')
+        # comb_testpred_df = pd.read_csv('./' + dataset + '/filtered_data/split_input_2.csv')
+        # print(fold_n, epoch_name, dataset, modelname)
+        # comb_testpred_df['Pred Score'] = list(test_pred_df['Pred Score'])
+        # comb_testpred_df.to_csv('./' + dataset + '/result/' + test_name + '/' + modelname + '/' + epoch_name + '/combine_testpred.csv', index=False, header=True)
+        # sns.set_style('whitegrid')
+        # sns.jointplot(data=comb_testpred_df, x='Score', y='Pred Score', kind='reg')
         test_pearson = test_pred_df.corr(method='pearson')['Pred Score'][0]
         test_score_list = list(test_pred_df['Score'])
         test_pred_list = list(test_pred_df['Pred Score'])
@@ -136,27 +136,27 @@ class AnalyseCorr():
         print('--- TEST ---')
         print('BEST MODEL TEST LOSS: ', test_loss)
         print('BEST MODEL TEST PEARSON CORR: ', test_pearson)
-        ### HISTOGRAM
-        hist = test_pred_df.hist(column=['Score', 'Pred Score'], bins=20)
-        plt.savefig(plot_path + '/testpred_hist_' + str(fold_n) + '.png', dpi=300)
-        ### BOX PLOT
-        testpred_df = comb_testpred_df[['Cell Line Name', 'Pred Score']]
-        testpred_df['Type'] = ['Prediction Score']*testpred_df.shape[0]
-        testpred_df = testpred_df.rename(columns={'Pred Score': 'Drug Score'})
-        test_df = comb_testpred_df[['Cell Line Name', 'Score']]
-        test_df['Type'] = ['Input Score']*test_df.shape[0]
-        test_df = test_df.rename(columns={'Score': 'Drug Score'})
-        comb_score_df = pd.concat([testpred_df, test_df])
-        comb_score_df = comb_score_df.rename(columns={'Cell Line Name': 'cell_line_name'})
-        a4_dims = (20, 15)
-        fig, ax = plt.subplots(figsize=a4_dims)
-        sns.set_context('paper')
-        # import pdb; pdb.set_trace()
-        cell_line_list = sorted(list(set(comb_score_df['cell_line_name'])))
-        sns.boxplot(ax=ax, x='cell_line_name', y='Drug Score', hue='Type', data=comb_score_df, order=cell_line_list)
-        plt.xticks(rotation = 90, ha = 'right')
-        plt.savefig(plot_path + '/testpred_compare_cell_line_boxplot_' + str(fold_n) + '.png', dpi=600)
-        plt.close('all')
+        # ### HISTOGRAM
+        # hist = test_pred_df.hist(column=['Score', 'Pred Score'], bins=20)
+        # plt.savefig(plot_path + '/testpred_hist_' + str(fold_n) + '.png', dpi=300)
+        # ### BOX PLOT
+        # testpred_df = comb_testpred_df[['Cell Line Name', 'Pred Score']]
+        # testpred_df['Type'] = ['Prediction Score']*testpred_df.shape[0]
+        # testpred_df = testpred_df.rename(columns={'Pred Score': 'Drug Score'})
+        # test_df = comb_testpred_df[['Cell Line Name', 'Score']]
+        # test_df['Type'] = ['Input Score']*test_df.shape[0]
+        # test_df = test_df.rename(columns={'Score': 'Drug Score'})
+        # comb_score_df = pd.concat([testpred_df, test_df])
+        # comb_score_df = comb_score_df.rename(columns={'Cell Line Name': 'cell_line_name'})
+        # a4_dims = (20, 15)
+        # fig, ax = plt.subplots(figsize=a4_dims)
+        # sns.set_context('paper')
+        # # import pdb; pdb.set_trace()
+        # cell_line_list = sorted(list(set(comb_score_df['cell_line_name'])))
+        # sns.boxplot(ax=ax, x='cell_line_name', y='Drug Score', hue='Type', data=comb_score_df, order=cell_line_list)
+        # plt.xticks(rotation = 90, ha = 'right')
+        # plt.savefig(plot_path + '/testpred_compare_cell_line_boxplot_' + str(fold_n) + '.png', dpi=600)
+        # plt.close('all')
         # plt.show()
         return train_pearson, test_pearson, train_loss, test_loss
     
@@ -465,8 +465,8 @@ if __name__ == "__main__":
     # dataset = 'data-drugcomb-fi'
     dataset = 'data-DrugCombDB'
 
-    # test_name = 'drug-test'
-    test_name = 'cell-test'
+    test_name = 'drug-test'
+    # test_name = 'cell-test'
     rebuild = True
     # rebuild = False
     
