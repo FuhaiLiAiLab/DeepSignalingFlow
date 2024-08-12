@@ -7,6 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from specify import Specify
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 class NetAnalyse():
     def __init__(self):
@@ -324,7 +325,7 @@ class NetAnalyse():
         cmap2 = plt.cm.OrRd
         emin = min(weights)
         emax = max(weights)
-        fig=plt.figure(figsize=(10, 6)) 
+        fig=plt.figure(figsize=(12, 6)) 
 
         nx.draw_networkx_edges(bind_filtered_digraph, 
                     pos = pos,
@@ -408,18 +409,19 @@ class NetAnalyse():
         nx.draw_networkx_labels(bind_filtered_digraph,
                     pos = pos,
                     labels = bind_filter_node_name_dict,
-                    font_size = 3.0
+                    font_size = 5.0
                     )
 
-        # import pdb; pdb.set_trace()
-        degree = plt.cm.ScalarMappable(cmap = cmap, norm = plt.Normalize(vmin = dmin, vmax = dmax))
-        dcl = plt.colorbar(degree)
-        dcl.ax.tick_params(labelsize = 8)
-        dcl.ax.set_ylabel('Nodes Degree')
-        edge = plt.cm.ScalarMappable(cmap = cmap2, norm = plt.Normalize(vmin = emin, vmax = emax))
-        ecl = plt.colorbar(edge)
-        ecl.ax.tick_params(labelsize = 8)
-        ecl.ax.set_ylabel('Edges Weight')
+
+        # # import pdb; pdb.set_trace()
+        # degree = plt.cm.ScalarMappable(cmap = cmap, norm = plt.Normalize(vmin = dmin, vmax = dmax))
+        # dcl = plt.colorbar(degree)
+        # dcl.ax.tick_params(labelsize = 8)
+        # dcl.ax.set_ylabel('Nodes Degree')
+        # edge = plt.cm.ScalarMappable(cmap = cmap2, norm = plt.Normalize(vmin = emin, vmax = emax))
+        # ecl = plt.colorbar(edge)
+        # ecl.ax.tick_params(labelsize = 8)
+        # ecl.ax.set_ylabel('Edges Weight')
         
         drugA = drugbank_num_drug_dict[cellline_specific_druglist[0]]
         drugB = drugbank_num_drug_dict[cellline_specific_druglist[1]]
@@ -515,11 +517,11 @@ if __name__ == "__main__":
     top_k = 20
     seed = 187
 
-    topmin_loss = False
-    # topmin_loss = True
+    # topmin_loss = False
+    topmin_loss = True
 
-    # cutoff_range = True
-    cutoff_range = False
+    cutoff_range = True
+    # cutoff_range = False
     # GET TESTLOSS TOP/BOTTOM Object List
     testloss_topminobj_list, testloss_bottomminobj_list = Specify().cancer_cellline_specific(top_k, cellline_name)
 

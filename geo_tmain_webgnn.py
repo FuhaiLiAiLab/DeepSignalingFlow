@@ -154,12 +154,16 @@ def train_geowebgnn(args, fold_n, load_path, iteration_num, device, dataset):
     final_annotation_gene_df = pd.read_csv('./' + dataset + '/filtered_data/kegg_gene_annotation.csv')
     num_gene = final_annotation_gene_df.shape[0]
     form_data_path = './' + dataset + '/form_data'
+
+    import pdb; pdb.set_trace()
+
     # READ THESE FEATURE LABEL FILES
     print('--- LOADING TRAINING FILES ... ---')
     xTr = np.load('./' + dataset + '/form_data/xTr' + str(fold_n) + '.npy')
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')
     drugTr =  np.load('./' + dataset + '/form_data/drugTr' + str(fold_n) + '.npy')
-    edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy') ).long() 
+    edge_index = torch.from_numpy(np.load(form_data_path + '/edge_index.npy')).long() 
+
 
     # BUILD [WeightBiGNN, DECODER] MODEL
     model = build_geowebgnn_model(args, device, dataset)
@@ -375,9 +379,9 @@ if __name__ == "__main__":
     # # TRAIN THE MODEL
     # TRAIN [FOLD-1]
     fold_n = 2
-    dataset = 'data-nci'
+    # dataset = 'data-nci'
     # dataset = 'data-oneil'
-    # dataset = 'data-drugcomb-fi'
+    dataset = 'data-drugcomb-fi'
     # dataset = 'data-DrugCombDB'
     load_path = ''
     yTr = np.load('./' + dataset + '/form_data/yTr' + str(fold_n) + '.npy')

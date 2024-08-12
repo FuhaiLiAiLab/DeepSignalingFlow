@@ -1,0 +1,19 @@
+Value,Count
+Process(activation),53024
+Process,23585
+Binding,16959
+Process(inhibition),13260
+Process(phosphorylation),10952
+Process(binding/association),7346
+Process(expression),6895
+Process(indirect effect),5148
+Process(dephosphorylation),1779
+Process(missing),880
+Process(missing interaction),751
+Process(ubiquitination),483
+Process(dissociation),339
+Process(repression),154
+Process(indirect),53
+Process(glycosylation),22
+Process(methylation),8
+Process(state change),2

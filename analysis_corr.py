@@ -256,12 +256,12 @@ class AnalyseCorr():
         print(gin_decoder_test_list)
         print(m3net_decoder_test_list)
         sns.set_style(style=None)
-        gcn = plt.bar(x - 3*width, gcn_decoder_test_list, width, label='GCN Decoder', color=colors[0])
-        gat = plt.bar(x - 2*width, gat_decoder_test_list, width, label='GAT Decoder', color=colors[1])
-        gformer = plt.bar(x - 1*width, gformer_decoder_test_list, width, label='GraphFormer Decoder', color=colors[2])
-        mixhop = plt.bar(x, mixhop_decoder_test_list, width, label='MixHop Decoder', color=colors[3])
-        pna = plt.bar(x + 1*width, pna_decoder_test_list, width, label='PNA Decoder', color=colors[4])
-        gin = plt.bar(x + 2*width, gin_decoder_test_list, width, label='GIN Decoder', color=colors[5])
+        gcn = plt.bar(x - 3*width, gcn_decoder_test_list, width, label='GCN', color=colors[0])
+        gat = plt.bar(x - 2*width, gat_decoder_test_list, width, label='GAT', color=colors[1])
+        gformer = plt.bar(x - 1*width, gformer_decoder_test_list, width, label='GraphFormer', color=colors[2])
+        mixhop = plt.bar(x, mixhop_decoder_test_list, width, label='MixHop', color=colors[3])
+        pna = plt.bar(x + 1*width, pna_decoder_test_list, width, label='PNA', color=colors[4])
+        gin = plt.bar(x + 2*width, gin_decoder_test_list, width, label='GIN', color=colors[5])
         m3net = plt.bar(x + 3*width, m3net_decoder_test_list, width, label='M3NetFlow', color=colors[6])
         plt.ylabel('Pearson Correlation')
         # plt.title('Pearson Correlation Comparison For 3 GNN Models')
@@ -292,12 +292,12 @@ class AnalyseCorr():
         print(bgnn_decoder_avg_list)
         print(webgnn_decoder_avg_list)
         sns.set_style(style=None)
-        gcn = plt.bar(x - 3*width, gcn_decoder_avg_list, width, label='GCN Decoder', color=colors[0])
-        gat = plt.bar(x - 2*width, gat_decoder_avg_list, width, label='GAT Decoder', color=colors[1])
-        gformer = plt.bar(x - 1*width, gformer_decoder_avg_list, width, label='GraphFormer Decoder', color=colors[2])
-        mixhop = plt.bar(x + 0*width, mixhop_decoder_avg_list, width, label='MixHop Decoder', color=colors[3])
-        gin = plt.bar(x + 1*width, gin_decoder_avg_list, width, label='GIN Decoder', color=colors[4])
-        bgnn = plt.bar(x + 2*width, bgnn_decoder_avg_list, width, label='BGNN Decoder', color=colors[5])
+        gcn = plt.bar(x - 3*width, gcn_decoder_avg_list, width, label='GCN', color=colors[0])
+        gat = plt.bar(x - 2*width, gat_decoder_avg_list, width, label='GAT', color=colors[1])
+        gformer = plt.bar(x - 1*width, gformer_decoder_avg_list, width, label='GraphFormer', color=colors[2])
+        mixhop = plt.bar(x + 0*width, mixhop_decoder_avg_list, width, label='MixHop', color=colors[3])
+        gin = plt.bar(x + 1*width, gin_decoder_avg_list, width, label='GIN', color=colors[4])
+        bgnn = plt.bar(x + 2*width, bgnn_decoder_avg_list, width, label='BGNN', color=colors[5])
         webgnn = plt.bar(x + 3*width, webgnn_decoder_avg_list, width, label='DeepSignalingFlow', color=colors[6])
         plt.ylabel('Pearson Correlation')
         # plt.title('Pearson Correlation Comparison For 3 GNN Models')
@@ -461,61 +461,61 @@ def func(pct, allvalues):
 if __name__ == "__main__":
     ### DATASET SELECTION
     # dataset = 'data-drugcomb-fi'
-    dataset = 'data-DrugCombDB'
-    # dataset = 'data-nci'
+    # dataset = 'data-DrugCombDB'
+    dataset = 'data-nci'
     # dataset = 'data-oneil'
     # rebuild = True
     rebuild = False
     
-    ### MODEL SELECTION
-    if dataset == 'data-nci':
-        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=100, rebuild=rebuild)
-        gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=100, rebuild=rebuild)
-        gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=200, rebuild=rebuild)
-        mixhop_decoder_test_list, mixhop_decoder_loss_list  = model_result(dataset=dataset, modelname='mixhop', epoch_num=200, rebuild=rebuild)
-        gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=200, rebuild=rebuild)
-        bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
-        webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=500, rebuild=rebuild)
-    elif dataset == 'data-oneil':
-        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=100, rebuild=rebuild)
-        gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=100, rebuild=rebuild) 
-        gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=100, rebuild=rebuild)
-        mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, modelname='mixhop', epoch_num=100, rebuild=rebuild)
-        gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=100, rebuild=rebuild)
-        bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
-        webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=100, rebuild=rebuild)
-    elif dataset == 'data-drugcomb-fi':
-        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=50, rebuild=rebuild)
-        gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=100, rebuild=rebuild) 
-        gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=50, rebuild=rebuild)
-        mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, modelname='mixhop', epoch_num=100, rebuild=rebuild)
-        gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=50, rebuild=rebuild)
-        bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
-        webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=100, rebuild=rebuild)
-    elif dataset == 'data-DrugCombDB':
-        gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=100, rebuild=rebuild)
-        gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=50, rebuild=rebuild) 
-        gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=50, rebuild=rebuild)
-        mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, modelname='mixhop', epoch_num=50, rebuild=rebuild)
-        gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=50, rebuild=rebuild)
-        bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
-        webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=50, rebuild=rebuild)
+    # ### MODEL SELECTION
+    # if dataset == 'data-nci':
+    #     gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=100, rebuild=rebuild)
+    #     gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=100, rebuild=rebuild)
+    #     gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=200, rebuild=rebuild)
+    #     mixhop_decoder_test_list, mixhop_decoder_loss_list  = model_result(dataset=dataset, modelname='mixhop', epoch_num=200, rebuild=rebuild)
+    #     gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=200, rebuild=rebuild)
+    #     bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
+    #     webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=500, rebuild=rebuild)
+    # elif dataset == 'data-oneil':
+    #     gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=100, rebuild=rebuild)
+    #     gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=100, rebuild=rebuild) 
+    #     gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=100, rebuild=rebuild)
+    #     mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, modelname='mixhop', epoch_num=100, rebuild=rebuild)
+    #     gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=100, rebuild=rebuild)
+    #     bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
+    #     webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=100, rebuild=rebuild)
+    # elif dataset == 'data-drugcomb-fi':
+    #     gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=50, rebuild=rebuild)
+    #     gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=100, rebuild=rebuild) 
+    #     gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=50, rebuild=rebuild)
+    #     mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, modelname='mixhop', epoch_num=100, rebuild=rebuild)
+    #     gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=50, rebuild=rebuild)
+    #     bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
+    #     webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=100, rebuild=rebuild)
+    # elif dataset == 'data-DrugCombDB':
+    #     gcn_decoder_test_list, gcn_decoder_loss_list = model_result(dataset=dataset, modelname='gcn', epoch_num=100, rebuild=rebuild)
+    #     gat_decoder_test_list, gat_decoder_loss_list = model_result(dataset=dataset, modelname='gat', epoch_num=50, rebuild=rebuild) 
+    #     gformer_decoder_test_list, gformer_decoder_loss_list = model_result(dataset=dataset, modelname='gformer', epoch_num=50, rebuild=rebuild)
+    #     mixhop_decoder_test_list, mixhop_decoder_loss_list = model_result(dataset=dataset, modelname='mixhop', epoch_num=50, rebuild=rebuild)
+    #     gin_decoder_test_list, gin_decoder_loss_list = model_result(dataset=dataset, modelname='gin', epoch_num=50, rebuild=rebuild)
+    #     bgnn_decoder_test_list, bgnn_decoder_loss_list = model_result(dataset=dataset, modelname='bgnn', epoch_num=100, rebuild=rebuild)
+    #     webgnn_decoder_test_list, webgnn_decoder_loss_list = model_result(dataset=dataset, modelname='webgnn', epoch_num=50, rebuild=rebuild)
 
-    print('gcn_decoder_test_list = ', gcn_decoder_test_list)
-    print('gat_decoder_test_list = ', gat_decoder_test_list)
-    print('gformer_decoder_test_list = ', gformer_decoder_test_list)
-    print('mixhop_decoder_test_list =', mixhop_decoder_test_list)
-    print('gin_decoder_test_list = ', gin_decoder_test_list)
-    print('bgnn_decoder_test_list = ', bgnn_decoder_test_list)
-    print('webgnn_decoder_test_list = ', webgnn_decoder_test_list)
+    # print('gcn_decoder_test_list = ', gcn_decoder_test_list)
+    # print('gat_decoder_test_list = ', gat_decoder_test_list)
+    # print('gformer_decoder_test_list = ', gformer_decoder_test_list)
+    # print('mixhop_decoder_test_list =', mixhop_decoder_test_list)
+    # print('gin_decoder_test_list = ', gin_decoder_test_list)
+    # print('bgnn_decoder_test_list = ', bgnn_decoder_test_list)
+    # print('webgnn_decoder_test_list = ', webgnn_decoder_test_list)
 
-    print('gcn_decoder_loss_list = ', gcn_decoder_loss_list)
-    print('gat_decoder_loss_list = ', gat_decoder_loss_list)
-    print('gformer_decoder_loss_list = ', gformer_decoder_loss_list)
-    print('mixhop_decoder_loss_list = ', mixhop_decoder_loss_list)
-    print('gin_decoder_loss_list = ', gin_decoder_loss_list)
-    print('bgnn_decoder_loss_list = ', bgnn_decoder_loss_list)
-    print('webgnn_decoder_loss_list = ', webgnn_decoder_loss_list)
+    # print('gcn_decoder_loss_list = ', gcn_decoder_loss_list)
+    # print('gat_decoder_loss_list = ', gat_decoder_loss_list)
+    # print('gformer_decoder_loss_list = ', gformer_decoder_loss_list)
+    # print('mixhop_decoder_loss_list = ', mixhop_decoder_loss_list)
+    # print('gin_decoder_loss_list = ', gin_decoder_loss_list)
+    # print('bgnn_decoder_loss_list = ', bgnn_decoder_loss_list)
+    # print('webgnn_decoder_loss_list = ', webgnn_decoder_loss_list)
 
     # ### NCI-ALMANAC
     # gcn_decoder_test_list = [0.4130003816635538, 0.4662483372799231, 0.5370335322761259, 0.4194793977603401, 0.40824100173344124, 0.44880053014267685]
@@ -573,26 +573,26 @@ if __name__ == "__main__":
     # gin_decoder_test_list = [0.4345694056192812, 0.4213814614414578, 0.3270187009144137, 0.4523135880791608, 0.49424196143653115, 0.42590502349816883]
     # bgnn_decoder_test_list = [0.5500947945565586, 0.5311570467215128, 0.5582436928912344, 0.5334253455064432, 0.5965699828533841, 0.5538981725058266]
     # webgnn_decoder_test_list = [0.6154503815710425, 0.6036536956792591, 0.6141593097728945, 0.6207235304192388, 0.6214731943895582, 0.6150920223663985]
-    gcn_decoder_loss_list = [205.07731051195614, 217.25541042672614, 260.6371376322352, 218.84816746176057, 215.15267972844032]
-    gat_decoder_loss_list = [202.05119133332815, 226.69753055535094, 245.5635604790345, 238.54944531668878, 220.64003749000892]
-    gformer_decoder_loss_list = [199.10467178827898, 221.84681414800468, 224.21966666807032, 233.65451924178308, 241.04037113126992]
-    mixhop_decoder_loss_list = [7242.73480957766, 24582.9176148857, 4128.24326877227, 1541.5421177431779, 9479.328484365693]
-    gin_decoder_loss_list = [209.34563656390367, 232.03487936528919, 271.2186914549181, 222.88108170353507, 207.9519413423245]
-    bgnn_decoder_loss_list = [179.7907381845751, 202.39956216594598, 203.83703638641606, 201.0473376375656, 177.40495600754164]
-    webgnn_decoder_loss_list = [163.61726328810673, 181.33687884276551, 184.46956434472295, 172.63856701756006, 168.97727840441001]
+    # gcn_decoder_loss_list = [205.07731051195614, 217.25541042672614, 260.6371376322352, 218.84816746176057, 215.15267972844032]
+    # gat_decoder_loss_list = [202.05119133332815, 226.69753055535094, 245.5635604790345, 238.54944531668878, 220.64003749000892]
+    # gformer_decoder_loss_list = [199.10467178827898, 221.84681414800468, 224.21966666807032, 233.65451924178308, 241.04037113126992]
+    # mixhop_decoder_loss_list = [7242.73480957766, 24582.9176148857, 4128.24326877227, 1541.5421177431779, 9479.328484365693]
+    # gin_decoder_loss_list = [209.34563656390367, 232.03487936528919, 271.2186914549181, 222.88108170353507, 207.9519413423245]
+    # bgnn_decoder_loss_list = [179.7907381845751, 202.39956216594598, 203.83703638641606, 201.0473376375656, 177.40495600754164]
+    # webgnn_decoder_loss_list = [163.61726328810673, 181.33687884276551, 184.46956434472295, 172.63856701756006, 168.97727840441001]
 
     
 
-    # ### DATASET SCORES
-    # xgboost_avg_list = [0.6236, 0.6831, 0.6528, 0.6483]
-    # random_forest_avg_list = [0.5951, 0.6611, 0.5512, 0.5187]
-    # gcn_decoder_avg_list = [0.44880053014267685, 0.5006504458829926, 0.4640468098385126, 0.4486861508739965]
-    # gat_decoder_avg_list = [0.20370144360087586, 0.31544245586085357, 0.316050965425286, 0.43412602597291805]
-    # gformer_decoder_avg_list = [0.3639402600371423, 0.2865796746323482, 0.5248913512115596, 0.44834269075986066]
-    # mixhop_decoder_avg_list = [0.4812525149039315, 0.06933472855308473, 0.467720121852803, 0.06619856021818128]
-    # gin_decoder_avg_list = [0.5293721282286963, 0.2334096061540778, 0.31954732104868805, 0.42590502349816883]
-    # bgnn_decoder_avg_list = [0.48322756393242655, 0.6136181821069291, 0.5535073739063507, 0.5538981725058266]
-    # webgnn_decoder_avg_list = [0.6375229239479697, 0.6581405195312632, 0.6368434868854591, 0.6150920223663985]
+    ### DATASET SCORES
+    xgboost_avg_list = [0.6236, 0.6831, 0.6528, 0.6483]
+    random_forest_avg_list = [0.5951, 0.6611, 0.5512, 0.5187]
+    gcn_decoder_avg_list = [0.44880053014267685, 0.5006504458829926, 0.4640468098385126, 0.4486861508739965]
+    gat_decoder_avg_list = [0.20370144360087586, 0.31544245586085357, 0.316050965425286, 0.43412602597291805]
+    gformer_decoder_avg_list = [0.3639402600371423, 0.2865796746323482, 0.5248913512115596, 0.44834269075986066]
+    mixhop_decoder_avg_list = [0.4812525149039315, 0.06933472855308473, 0.467720121852803, 0.06619856021818128]
+    gin_decoder_avg_list = [0.5293721282286963, 0.2334096061540778, 0.31954732104868805, 0.42590502349816883]
+    bgnn_decoder_avg_list = [0.48322756393242655, 0.6136181821069291, 0.5535073739063507, 0.5538981725058266]
+    webgnn_decoder_avg_list = [0.6375229239479697, 0.6581405195312632, 0.6368434868854591, 0.6150920223663985]
 
     # AnalyseCorr().fold_comparison(dataset, gcn_decoder_test_list, 
     #                                 gat_decoder_test_list, 
@@ -602,14 +602,14 @@ if __name__ == "__main__":
     #                                 gin_decoder_test_list)
     
 
-    # AnalyseCorr().dataset_avg_comparison(dataset, 
-    #                                 gcn_decoder_avg_list, 
-    #                                 gat_decoder_avg_list, 
-    #                                 gformer_decoder_avg_list, 
-    #                                 mixhop_decoder_avg_list, 
-    #                                 gin_decoder_avg_list,
-    #                                 bgnn_decoder_avg_list,
-    #                                 webgnn_decoder_avg_list)
+    AnalyseCorr().dataset_avg_comparison(dataset, 
+                                    gcn_decoder_avg_list, 
+                                    gat_decoder_avg_list, 
+                                    gformer_decoder_avg_list, 
+                                    mixhop_decoder_avg_list, 
+                                    gin_decoder_avg_list,
+                                    bgnn_decoder_avg_list,
+                                    webgnn_decoder_avg_list)
 
 
     # AnalyseCorr().pred_result(fold_n=1, epoch_name='epoch_100', dataset=dataset, modelname='tsgnn')
