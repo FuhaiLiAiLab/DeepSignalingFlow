@@ -28,7 +28,6 @@ Complex signaling pathways are often implicated in drug resistance. Combining dr
 - [3. Results](#3-results)
 - [4. Cell-line Specific Biomarkers](#4-cell-line-specific-biomarkers)
 - [5. Result Validation](#5-result-validation)
-- [Links](#links)
 - [Citation](#citation)
 - [License](#license)
 
@@ -71,7 +70,6 @@ python geo_tmain_webgnn.py
 <p align="center">
   <img src="./figures/Figure2.png" alt="Overall results summary" width="70%">
 </p>
-
 ---
 
 ## 4. Cell-line–Specific Biomarkers
@@ -82,7 +80,6 @@ python geo_tmain_webgnn.py
 <p align="center">
   <img src="./figures/Figure4.png" alt="Biomarker analysis (panel 2)" width="70%">
 </p>
-
 ---
 
 ## 5. Result Validation
@@ -96,8 +93,6 @@ python geo_tmain_webgnn.py
   <p align="center">
     <img src="./figures/Figure6.png" alt="Validation: <5-hop path weight sums" width="70%">
   </p>
-
-
 ---
 
 ## Citation
